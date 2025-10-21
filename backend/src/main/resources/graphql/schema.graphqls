@@ -1,0 +1,471 @@
+# GraphQL Schema for Mobile Parts E-Commerce Platform
+
+# Scalar types
+scalar DateTime
+scalar BigDecimal
+scalar Upload
+
+# Enums
+enum UserRole {
+    CUSTOMER
+    VENDOR
+    ADMIN
+}
+
+enum BrandCategory {
+    APPLE
+    ANDROID
+}
+
+enum ComponentType {
+    SCREEN
+    BATTERY
+    CAMERA_FRONT
+    CAMERA_REAR
+    CHARGING_PORT
+    SPEAKER
+    MICROPHONE
+    MOTHERBOARD
+    POWER_BUTTON
+    VOLUME_BUTTON
+    HOME_BUTTON
+    BACK_COVER
+    SIM_TRAY
+    FLEX_CABLE
+    EARPIECE
+    VIBRATOR
+    ANTENNA
+    WIFI_MODULE
+    BLUETOOTH_MODULE
+    OTHER
+}
+
+enum ApprovalStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+enum ComponentCondition {
+    NEW
+    REFURBISHED
+    USED_LIKE_NEW
+    USED_GOOD
+}
+
+enum OrderStatus {
+    PENDING
+    CONFIRMED
+    PROCESSING
+    SHIPPED
+    DELIVERED
+    CANCELLED
+    REFUNDED
+}
+
+enum PaymentStatus {
+    PENDING
+    AUTHORIZED
+    CAPTURED
+    FAILED
+    REFUNDED
+}
+
+# Types
+type User {
+    id: ID!
+    azureAdObjectId: String
+    email: String!
+    firstName: String!
+    lastName: String!
+    fullName: String!
+    phoneNumber: String
+    addressLine1: String
+    addressLine2: String
+    city: String
+    state: String
+    postalCode: String
+    country: String
+    roles: [UserRole!]!
+    isActive: Boolean!
+    emailVerified: Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime
+}
+
+type Brand {
+    id: ID!
+    name: String!
+    description: String
+    logoUrl: String
+    category: BrandCategory!
+    isActive: Boolean!
+    models: [Model!]
+    createdAt: DateTime!
+}
+
+type Model {
+    id: ID!
+    name: String!
+    brand: Brand!
+    description: String
+    imageUrl: String
+    releaseYear: Int
+    modelNumber: String
+    isActive: Boolean!
+    components: [Component!]
+    fullName: String!
+    createdAt: DateTime!
+}
+
+type Component {
+    id: ID!
+    name: String!
+    model: Model!
+    componentType: ComponentType!
+    description: String
+    price: BigDecimal!
+    quantityAvailable: Int!
+    sku: String
+    vendor: User!
+    approvalStatus: ApprovalStatus!
+    approvedBy: User
+    imageUrl: String
+    manufacturer: String
+    warrantyMonths: Int
+    condition: ComponentCondition!
+    isActive: Boolean!
+    isAvailable: Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime
+}
+
+type CartItem {
+    id: ID!
+    user: User!
+    component: Component!
+    quantity: Int!
+    subtotal: BigDecimal!
+    createdAt: DateTime!
+}
+
+type Cart {
+    items: [CartItem!]!
+    totalItems: Int!
+    subtotal: BigDecimal!
+}
+
+type Order {
+    id: ID!
+    orderNumber: String!
+    customer: User!
+    orderItems: [OrderItem!]!
+    subtotal: BigDecimal!
+    taxAmount: BigDecimal!
+    shippingAmount: BigDecimal!
+    totalAmount: BigDecimal!
+    status: OrderStatus!
+    paymentStatus: PaymentStatus!
+    paymentMethod: String
+    paymentTransactionId: String
+    shippingName: String!
+    shippingAddressLine1: String!
+    shippingAddressLine2: String
+    shippingCity: String!
+    shippingState: String!
+    shippingPostalCode: String!
+    shippingCountry: String!
+    shippingPhone: String
+    shippingEmail: String
+    trackingNumber: String
+    notes: String
+    totalItems: Int!
+    createdAt: DateTime!
+    updatedAt: DateTime
+}
+
+type OrderItem {
+    id: ID!
+    component: Component!
+    quantity: Int!
+    unitPrice: BigDecimal!
+    totalPrice: BigDecimal!
+    componentName: String!
+    componentSku: String
+}
+
+type AuthPayload {
+    token: String!
+    refreshToken: String
+    user: User!
+    expiresIn: Int!
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
+
+type ComponentConnection {
+    edges: [ComponentEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+type ComponentEdge {
+    node: Component!
+    cursor: String!
+}
+
+type OrderConnection {
+    edges: [OrderEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+type OrderEdge {
+    node: Order!
+    cursor: String!
+}
+
+type SalesAnalytics {
+    totalRevenue: BigDecimal!
+    totalOrders: Int!
+    averageOrderValue: BigDecimal!
+    topSellingComponents: [ComponentSales!]!
+    revenueByMonth: [MonthlyRevenue!]!
+}
+
+type ComponentSales {
+    component: Component!
+    quantitySold: Int!
+    revenue: BigDecimal!
+}
+
+type MonthlyRevenue {
+    month: String!
+    revenue: BigDecimal!
+    orderCount: Int!
+}
+
+type InventoryStats {
+    totalComponents: Int!
+    lowStockComponents: Int!
+    pendingApprovals: Int!
+    totalValue: BigDecimal!
+}
+
+type RAGResponse {
+    answer: String!
+    sources: [String!]
+    confidence: Float
+    suggestions: [Component!]
+}
+
+# Input Types
+input RegisterInput {
+    email: String!
+    firstName: String!
+    lastName: String!
+    phoneNumber: String
+    password: String!
+}
+
+input UpdateUserInput {
+    firstName: String
+    lastName: String
+    phoneNumber: String
+    addressLine1: String
+    addressLine2: String
+    city: String
+    state: String
+    postalCode: String
+    country: String
+}
+
+input CreateBrandInput {
+    name: String!
+    description: String
+    category: BrandCategory!
+    logoUrl: String
+}
+
+input CreateModelInput {
+    name: String!
+    brandId: ID!
+    description: String
+    imageUrl: String
+    releaseYear: Int
+    modelNumber: String
+}
+
+input CreateComponentInput {
+    name: String!
+    modelId: ID!
+    componentType: ComponentType!
+    description: String
+    price: BigDecimal!
+    quantityAvailable: Int!
+    manufacturer: String
+    warrantyMonths: Int
+    condition: ComponentCondition
+    imageUrl: String
+}
+
+input UpdateComponentInput {
+    name: String
+    description: String
+    price: BigDecimal
+    quantityAvailable: Int
+    manufacturer: String
+    warrantyMonths: Int
+    condition: ComponentCondition
+    imageUrl: String
+    isActive: Boolean
+}
+
+input AddToCartInput {
+    componentId: ID!
+    quantity: Int!
+}
+
+input UpdateCartItemInput {
+    cartItemId: ID!
+    quantity: Int!
+}
+
+input CreateOrderInput {
+    shippingName: String!
+    shippingAddressLine1: String!
+    shippingAddressLine2: String
+    shippingCity: String!
+    shippingState: String!
+    shippingPostalCode: String!
+    shippingCountry: String!
+    shippingPhone: String
+    shippingEmail: String
+    paymentMethod: String!
+    notes: String
+}
+
+input ComponentFilterInput {
+    brandId: ID
+    modelId: ID
+    componentType: ComponentType
+    minPrice: BigDecimal
+    maxPrice: BigDecimal
+    condition: ComponentCondition
+    searchTerm: String
+}
+
+input OrderFilterInput {
+    status: OrderStatus
+    paymentStatus: PaymentStatus
+    startDate: DateTime
+    endDate: DateTime
+}
+
+# Queries
+type Query {
+    # User queries
+    me: User
+    user(id: ID!): User
+    users(role: UserRole): [User!]!
+    
+    # Brand queries
+    brands: [Brand!]!
+    brandsByCategory(category: BrandCategory!): [Brand!]!
+    brand(id: ID!): Brand
+    
+    # Model queries
+    models: [Model!]!
+    modelsByBrand(brandId: ID!): [Model!]!
+    model(id: ID!): Model
+    searchModels(searchTerm: String!): [Model!]!
+    
+    # Component queries
+    components(filter: ComponentFilterInput, first: Int, after: String): ComponentConnection!
+    component(id: ID!): Component
+    componentsByModel(modelId: ID!): [Component!]!
+    componentsByType(type: ComponentType!): [Component!]!
+    searchComponents(searchTerm: String!): [Component!]!
+    pendingComponents: [Component!]!
+    vendorComponents: [Component!]!
+    
+    # Cart queries
+    myCart: Cart!
+    
+    # Order queries
+    orders(filter: OrderFilterInput, first: Int, after: String): OrderConnection!
+    order(id: ID!): Order
+    orderByNumber(orderNumber: String!): Order
+    myOrders: [Order!]!
+    
+    # Analytics queries (Admin only)
+    salesAnalytics(startDate: DateTime, endDate: DateTime): SalesAnalytics!
+    inventoryStats: InventoryStats!
+    
+    # RAG queries
+    askQuestion(question: String!): RAGResponse!
+    getRecommendations(modelId: ID!): [Component!]!
+}
+
+# Mutations
+type Mutation {
+    # Authentication
+    register(input: RegisterInput!): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
+    refreshToken(refreshToken: String!): AuthPayload!
+    logout: Boolean!
+    
+    # User management
+    updateProfile(input: UpdateUserInput!): User!
+    deleteAccount: Boolean!
+    
+    # Brand management (Admin only)
+    createBrand(input: CreateBrandInput!): Brand!
+    updateBrand(id: ID!, input: CreateBrandInput!): Brand!
+    deleteBrand(id: ID!): Boolean!
+    
+    # Model management (Admin only)
+    createModel(input: CreateModelInput!): Model!
+    updateModel(id: ID!, input: CreateModelInput!): Model!
+    deleteModel(id: ID!): Boolean!
+    
+    # Component management (Vendor)
+    createComponent(input: CreateComponentInput!): Component!
+    updateComponent(id: ID!, input: UpdateComponentInput!): Component!
+    deleteComponent(id: ID!): Boolean!
+    uploadComponentImage(componentId: ID!, image: Upload!): String!
+    
+    # Component approval (Admin only)
+    approveComponent(id: ID!): Component!
+    rejectComponent(id: ID!, reason: String): Component!
+    
+    # Cart management
+    addToCart(input: AddToCartInput!): CartItem!
+    updateCartItem(input: UpdateCartItemInput!): CartItem!
+    removeFromCart(cartItemId: ID!): Boolean!
+    clearCart: Boolean!
+    
+    # Order management
+    createOrder(input: CreateOrderInput!): Order!
+    updateOrderStatus(orderId: ID!, status: OrderStatus!): Order!
+    updatePaymentStatus(orderId: ID!, status: PaymentStatus!, transactionId: String): Order!
+    cancelOrder(orderId: ID!): Order!
+    
+    # Admin operations
+    assignRole(userId: ID!, role: UserRole!): User!
+    removeRole(userId: ID!, role: UserRole!): User!
+    deactivateUser(userId: ID!): User!
+    activateUser(userId: ID!): User!
+}
+
+# Subscriptions (for real-time updates)
+type Subscription {
+    orderStatusChanged(orderId: ID!): Order!
+    newPendingComponent: Component!
+    inventoryUpdated(componentId: ID!): Component!
+}

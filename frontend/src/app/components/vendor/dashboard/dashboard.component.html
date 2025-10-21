@@ -1,0 +1,291 @@
+<div class="vendor-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="vendor-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 7h-9"></path>
+            <path d="M14 17H5"></path>
+            <circle cx="17" cy="17" r="3"></circle>
+            <circle cx="7" cy="7" r="3"></circle>
+          </svg>
+        </div>
+        <div class="vendor-info">
+          <h1 class="vendor-name">{{ vendorName }}</h1>
+          <p class="vendor-role">Vendor Dashboard</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="action-btn" (click)="navigateToInventory()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          <span>Inventory</span>
+        </button>
+        <button class="action-btn" (click)="navigateToOrders()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+          </svg>
+          <span>Orders</span>
+        </button>
+        <button class="action-btn logout-btn" (click)="logout()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Grid -->
+  <section class="stats-section animate-fade-in">
+    <div class="stats-grid">
+      <div class="stat-card revenue-card">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Total Revenue</p>
+          <h2 class="stat-value">{{ stats.revenue | currency }}</h2>
+          <p class="stat-change positive">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+            {{ stats.revenueChange }}% from last month
+          </p>
+        </div>
+      </div>
+
+      <div class="stat-card orders-card">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Total Orders</p>
+          <h2 class="stat-value">{{ stats.totalOrders }}</h2>
+          <p class="stat-change positive">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+            {{ stats.ordersChange }}% from last month
+          </p>
+        </div>
+      </div>
+
+      <div class="stat-card products-card">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Active Products</p>
+          <h2 class="stat-value">{{ stats.activeProducts }}</h2>
+          <p class="stat-change neutral">{{ stats.lowStockItems }} low stock items</p>
+        </div>
+      </div>
+
+      <div class="stat-card rating-card">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Vendor Rating</p>
+          <h2 class="stat-value">{{ stats.rating }}/5.0</h2>
+          <p class="stat-change positive">Based on {{ stats.reviewCount }} reviews</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Grid -->
+  <div class="dashboard-grid">
+    <!-- Recent Orders -->
+    <section class="card recent-orders-card animate-fade-in delay-1">
+      <div class="card-header">
+        <h2 class="card-title">Recent Orders</h2>
+        <button class="view-all-btn" (click)="navigateToOrders()">
+          View All
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="orders-list">
+        <div class="order-item" *ngFor="let order of recentOrders">
+          <div class="order-info">
+            <div class="order-header-row">
+              <span class="order-id">#{{ order.id }}</span>
+              <span class="order-status" [class]="'status-' + order.status.toLowerCase()">
+                {{ order.status }}
+              </span>
+            </div>
+            <p class="order-product">{{ order.productName }}</p>
+            <p class="order-meta">
+              <span class="order-quantity">Qty: {{ order.quantity }}</span>
+              <span class="order-date">{{ order.date }}</span>
+            </p>
+          </div>
+          <div class="order-amount">
+            <p class="amount">{{ order.amount | currency }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Low Stock Alert -->
+    <section class="card low-stock-card animate-fade-in delay-2">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          Low Stock Alert
+        </h2>
+        <button class="view-all-btn" (click)="navigateToInventory()">
+          Manage
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="stock-list">
+        <div class="stock-item" *ngFor="let item of lowStockProducts">
+          <div class="stock-info">
+            <p class="stock-name">{{ item.name }}</p>
+            <div class="stock-bar">
+              <div class="stock-progress" [style.width.%]="(item.currentStock / item.minStock) * 100"></div>
+            </div>
+            <p class="stock-quantity">{{ item.currentStock }} of {{ item.minStock }} units</p>
+          </div>
+          <button class="restock-btn" (click)="restockProduct(item.id)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="card quick-actions-card animate-fade-in delay-3">
+      <div class="card-header">
+        <h2 class="card-title">Quick Actions</h2>
+      </div>
+      
+      <div class="actions-grid">
+        <button class="quick-action-btn" (click)="addNewProduct()">
+          <div class="action-icon add-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <span class="action-label">Add Product</span>
+        </button>
+
+        <button class="quick-action-btn" (click)="updatePrices()">
+          <div class="action-icon price-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <span class="action-label">Update Prices</span>
+        </button>
+
+        <button class="quick-action-btn" (click)="viewReports()">
+          <div class="action-icon report-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <span class="action-label">View Reports</span>
+        </button>
+
+        <button class="quick-action-btn" (click)="manageShipping()">
+          <div class="action-icon shipping-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+          </div>
+          <span class="action-label">Shipping</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Sales Chart -->
+    <section class="card sales-chart-card animate-fade-in delay-4">
+      <div class="card-header">
+        <h2 class="card-title">Sales Overview</h2>
+        <div class="chart-period">
+          <button class="period-btn" [class.active]="selectedPeriod === 'week'" (click)="changePeriod('week')">Week</button>
+          <button class="period-btn" [class.active]="selectedPeriod === 'month'" (click)="changePeriod('month')">Month</button>
+          <button class="period-btn" [class.active]="selectedPeriod === 'year'" (click)="changePeriod('year')">Year</button>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-bars">
+          <div class="bar-group" *ngFor="let data of salesChartData">
+            <div class="bar-wrapper">
+              <div class="bar" [style.height.%]="data.percentage">
+                <span class="bar-value">{{ data.value | currency:'USD':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+            <span class="bar-label">{{ data.label }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Products -->
+    <section class="card top-products-card animate-fade-in delay-5">
+      <div class="card-header">
+        <h2 class="card-title">Top Selling Products</h2>
+        <button class="view-all-btn" (click)="navigateToInventory()">
+          View All
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="products-list">
+        <div class="product-item" *ngFor="let product of topProducts">
+          <div class="product-rank">{{ product.rank }}</div>
+          <div class="product-info">
+            <p class="product-name">{{ product.name }}</p>
+            <p class="product-sales">{{ product.soldCount }} sold</p>
+          </div>
+          <div class="product-revenue">
+            <p class="revenue-amount">{{ product.revenue | currency }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="confirmation-container">
+  <div class="confirmation-card">
+    <div class="success-icon">✅</div>
+    <h1 class="confirmation-title">Order Placed Successfully!</h1>
+    <p class="confirmation-subtitle">Thank you for your purchase</p>
+    
+    <div class="order-details">
+      <h2 class="details-title">📦 Order Details</h2>
+      <div class="detail-row">
+        <span class="detail-label">Order Number:</span>
+        <span class="detail-value">#{{ orderId }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Order Date:</span>
+        <span class="detail-value">{{ orderDate }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Estimated Delivery:</span>
+        <span class="detail-value">{{ estimatedDelivery }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Total Amount:</span>
+        <span class="detail-value highlight">${{ totalAmount }}</span>
+      </div>
+    </div>
+
+    <div class="order-status">
+      <h2 class="status-title">📍 Order Status</h2>
+      <div class="status-timeline">
+        <div class="status-step active">
+          <div class="step-icon">✓</div>
+          <div class="step-content">
+            <div class="step-title">Order Placed</div>
+            <div class="step-time">Just now</div>
+          </div>
+        </div>
+        <div class="status-step">
+          <div class="step-icon">⏳</div>
+          <div class="step-content">
+            <div class="step-title">Processing</div>
+            <div class="step-time">Within 24 hours</div>
+          </div>
+        </div>
+        <div class="status-step">
+          <div class="step-icon">🚚</div>
+          <div class="step-content">
+            <div class="step-title">Shipped</div>
+            <div class="step-time">2-3 days</div>
+          </div>
+        </div>
+        <div class="status-step">
+          <div class="step-icon">📦</div>
+          <div class="step-content">
+            <div class="step-title">Delivered</div>
+            <div class="step-time">5-7 days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirmation-info">
+      <p>A confirmation email has been sent to your registered email address.</p>
+      <p>You can track your order in the "My Orders" section.</p>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="continueShopping()">
+        Continue Shopping
+      </button>
+      <button class="btn btn-secondary" (click)="viewOrders()">
+        View My Orders
+      </button>
+    </div>
+  </div>
+</div>

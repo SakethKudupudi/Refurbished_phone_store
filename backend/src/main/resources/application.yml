@@ -1,0 +1,184 @@
+spring:
+  application:
+    name: mobile-parts-backend
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  
+  datasource:
+    url: ${AZURE_POSTGRESQL_URL:jdbc:postgresql://localhost:5432/mobileparts}
+    username: ${AZURE_POSTGRESQL_USERNAME:postgres}
+    password: ${AZURE_POSTGRESQL_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+  
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+  
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql
+    path: /graphql
+    schema:
+      printer:
+        enabled: true
+      locations: classpath:graphql/**/*.graphqls
+      file-extensions: .graphqls
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+      allowed-methods: GET,POST
+      allowed-headers: "*"
+      allow-credentials: true
+  
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AZURE_AD_B2C_ISSUER_URI:https://login.microsoftonline.com/your-tenant-id/v2.0}
+          jwk-set-uri: ${AZURE_AD_B2C_JWK_SET_URI:https://login.microsoftonline.com/your-tenant-id/discovery/v2.0/keys}
+
+# Azure Configuration
+azure:
+  activedirectory:
+    enabled: true
+    tenant-id: ${AZURE_AD_TENANT_ID:your-tenant-id}
+    client-id: ${AZURE_AD_CLIENT_ID:your-client-id}
+    client-secret: ${AZURE_AD_CLIENT_SECRET:your-client-secret}
+    app-id-uri: ${AZURE_AD_APP_ID_URI:api://your-app-id}
+    
+  storage:
+    blob:
+      enabled: true
+      account-name: ${AZURE_STORAGE_ACCOUNT_NAME:mobilepartstorage}
+      account-key: ${AZURE_STORAGE_ACCOUNT_KEY:your-storage-key}
+      endpoint: ${AZURE_STORAGE_ENDPOINT:https://mobilepartstorage.blob.core.windows.net}
+      container-name: ${AZURE_STORAGE_CONTAINER:product-images}
+  
+  keyvault:
+    enabled: true
+    uri: ${AZURE_KEYVAULT_URI:https://mobileparts-kv.vault.azure.net/}
+  
+  openai:
+    enabled: true
+    endpoint: ${AZURE_OPENAI_ENDPOINT:https://mobileparts-openai.openai.azure.com/}
+    api-key: ${AZURE_OPENAI_API_KEY:your-openai-key}
+    deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4}
+    embedding-deployment: ${AZURE_OPENAI_EMBEDDING_DEPLOYMENT:text-embedding-ada-002}
+  
+  search:
+    enabled: true
+    endpoint: ${AZURE_SEARCH_ENDPOINT:https://mobileparts-search.search.windows.net}
+    api-key: ${AZURE_SEARCH_API_KEY:your-search-key}
+    index-name: ${AZURE_SEARCH_INDEX:product-knowledge}
+  
+  communication:
+    connection-string: ${AZURE_COMMUNICATION_CONNECTION_STRING:endpoint=https://mobileparts-comm.communication.azure.com/;accesskey=your-key}
+    sender-address: ${AZURE_COMMUNICATION_SENDER:noreply@mobileparts.com}
+
+# Application Configuration
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:your-secret-key-change-in-production-must-be-at-least-256-bits}
+      expiration: 86400000 # 24 hours in milliseconds
+      refresh-expiration: 604800000 # 7 days
+  
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+      - https://mobileparts-frontend.azurewebsites.net
+  
+  rag:
+    enabled: true
+    offline-mode: ${RAG_OFFLINE_MODE:false}
+    offline-model-path: ${RAG_OFFLINE_MODEL_PATH:/models/llama2}
+    max-tokens: 2000
+    temperature: 0.7
+    chunk-size: 1000
+    chunk-overlap: 200
+  
+  payment:
+    mock-mode: ${PAYMENT_MOCK_MODE:true}
+    provider: ${PAYMENT_PROVIDER:stripe}
+    api-key: ${PAYMENT_API_KEY:your-payment-key}
+  
+  email:
+    enabled: true
+    mock-mode: ${EMAIL_MOCK_MODE:false}
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.mobileparts: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.graphql: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/mobile-parts-backend.log
+    max-size: 10MB
+    max-history: 30
+
+# Server Configuration
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+    include-exception: false
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/graphql
+  http2:
+    enabled: true

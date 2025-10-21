@@ -1,0 +1,198 @@
+<app-customer-header></app-customer-header>
+
+<div class="cart-page">
+  <!-- Toast Notification -->
+  <div class="toast" *ngIf="showToast" [@fadeIn]>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    {{ toastMessage }}
+  </div>
+
+  <div class="cart-container">
+    <!-- Header -->
+    <div class="cart-header" [@fadeIn]>
+      <div class="header-content">
+        <button class="back-button" (click)="continueShopping()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Continue Shopping
+        </button>
+        <div class="cart-title-section">
+          <h1 class="cart-title">Shopping Cart</h1>
+          <p class="cart-subtitle" *ngIf="cartItems.length > 0">{{ cartItems.length }} {{ cartItems.length === 1 ? 'item' : 'items' }}</p>
+        </div>
+        <button class="clear-cart-btn" *ngIf="cartItems.length > 0" (click)="clearCart()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Clear Cart
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty Cart State -->
+    <div class="empty-cart" *ngIf="cartItems.length === 0" [@fadeIn]>
+      <div class="empty-icon">
+        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      </div>
+      <h2 class="empty-title">Your cart is empty</h2>
+      <p class="empty-message">Add some amazing mobile parts to get started!</p>
+      <button class="start-shopping-btn" (click)="continueShopping()">
+        Start Shopping
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Cart Content -->
+    <div class="cart-grid" *ngIf="cartItems.length > 0">
+      <!-- Cart Items -->
+      <div class="cart-items-section">
+        <div class="section-header">
+          <h2 class="section-title">Items in Your Cart</h2>
+          <div class="free-shipping-badge" *ngIf="subtotal >= 100">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Free Shipping!
+          </div>
+          <div class="free-shipping-progress" *ngIf="subtotal > 0 && subtotal < 100">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="(subtotal / 100) * 100"></div>
+            </div>
+            <p class="progress-text">Add ${{ (100 - subtotal).toFixed(2) }} more for free shipping</p>
+          </div>
+        </div>
+
+        <div class="cart-items" [@listAnimation]="animationTrigger">
+          <div class="cart-item" *ngFor="let item of cartItems">
+            <!-- Item Image -->
+            <div class="item-image-container">
+              <div class="item-image">
+                <img [src]="item.imageUrl || 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=400'" [alt]="item.name">
+              </div>
+            </div>
+
+            <!-- Item Details -->
+            <div class="item-details">
+              <div class="item-header">
+                <h3 class="item-name">{{ item.name }}</h3>
+                <button class="item-remove-icon" (click)="removeItem(item)" title="Remove">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="item-meta">
+                <span class="item-type-badge">{{ item.type }}</span>
+                <span class="item-vendor">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  {{ item.vendorName }}
+                </span>
+              </div>
+
+              <div class="item-description" *ngIf="item.description">
+                {{ item.description }}
+              </div>
+
+              <!-- Item Actions -->
+              <div class="item-actions">
+                <div class="quantity-control">
+                  <button class="qty-btn" (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                    </svg>
+                  </button>
+                  <span class="qty-value">{{ item.quantity }}</span>
+                  <button class="qty-btn" (click)="increaseQuantity(item)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="item-price-section">
+                  <span class="unit-price" *ngIf="item.quantity > 1">${{ item.price.toFixed(2) }} each</span>
+                  <span class="total-price">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="cart-summary" [@fadeIn]>
+        <div class="summary-card">
+          <h2 class="summary-title">Order Summary</h2>
+
+          <div class="summary-section">
+            <div class="summary-row">
+              <span class="summary-label">Subtotal ({{ cartItems.length }} {{ cartItems.length === 1 ? 'item' : 'items' }}):</span>
+              <span class="summary-value">${{ subtotal.toFixed(2) }}</span>
+            </div>
+
+            <div class="summary-row">
+              <span class="summary-label">
+                Shipping:
+                <span class="free-tag" *ngIf="shipping === 0">FREE</span>
+              </span>
+              <span class="summary-value" [class.free]="shipping === 0">
+                {{ shipping === 0 ? 'Free' : '$' + shipping.toFixed(2) }}
+              </span>
+            </div>
+
+            <div class="summary-row">
+              <span class="summary-label">Tax (10%):</span>
+              <span class="summary-value">${{ tax.toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total">
+            <span class="total-label">Total:</span>
+            <span class="total-value">${{ total.toFixed(2) }}</span>
+          </div>
+
+          <button class="checkout-btn" (click)="proceedToCheckout()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+            Proceed to Checkout
+          </button>
+
+          <!-- Trust Badges -->
+          <div class="trust-badges">
+            <div class="trust-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>Secure Payment</span>
+            </div>
+            <div class="trust-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+              <span>Easy Returns</span>
+            </div>
+            <div class="trust-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>Fast Delivery</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

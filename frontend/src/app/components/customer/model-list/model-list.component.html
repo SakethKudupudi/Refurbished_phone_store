@@ -1,0 +1,44 @@
+<app-customer-header></app-customer-header>
+
+<div class="model-list-container">
+  <header class="model-header">
+    <button class="back-button" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back
+    </button>
+    <h1 class="model-title animate-fade-in">{{ brandName }} Models</h1>
+    <p class="model-subtitle animate-fade-in delay-1">Select your device model</p>
+  </header>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading models...</p>
+  </div>
+
+  <div class="models-grid" *ngIf="!loading">
+    <div class="model-card scale-up" 
+         *ngFor="let model of models; let i = index" 
+         (click)="selectModel(model.id)"
+         [class.delay-1]="i % 4 === 0"
+         [class.delay-2]="i % 4 === 1"
+         [class.delay-3]="i % 4 === 2"
+         [class.delay-4]="i % 4 === 3">
+      <div class="model-image-wrapper">
+        <img [src]="model.image" [alt]="model.name" class="model-image">
+        <div class="model-gradient"></div>
+      </div>
+      <div class="model-content">
+        <h3 class="model-name">{{ model.name }}</h3>
+        <p class="model-year">{{ model.year }}</p>
+        <div class="model-specs">
+          <span class="spec-badge">{{ model.storage }}</span>
+          <span class="spec-badge">{{ model.color }}</span>
+        </div>
+        <div class="model-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</div>

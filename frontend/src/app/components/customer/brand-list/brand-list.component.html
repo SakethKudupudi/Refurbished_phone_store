@@ -1,0 +1,40 @@
+<app-customer-header></app-customer-header>
+
+<div class="brand-list-container">
+  <header class="brand-header">
+    <button class="back-button" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back
+    </button>
+    <h1 class="brand-title animate-fade-in">{{ category }} Brands</h1>
+    <p class="brand-subtitle animate-fade-in delay-1">Choose your device manufacturer</p>
+  </header>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading brands...</p>
+  </div>
+
+  <div class="brands-grid" *ngIf="!loading">
+    <div class="brand-card scale-up" 
+         *ngFor="let brand of brands; let i = index" 
+         (click)="selectBrand(brand.id)" 
+         [class.delay-1]="i === 0"
+         [class.delay-2]="i === 1"
+         [class.delay-3]="i === 2"
+         [class.delay-4]="i === 3">
+      <div class="brand-image-wrapper">
+        <img [src]="brand.logo" [alt]="brand.name" class="brand-image">
+        <div class="brand-gradient"></div>
+      </div>
+      <div class="brand-content">
+        <h3 class="brand-name">{{ brand.name }}</h3>
+        <p class="brand-description">{{ brand.description }}</p>
+        <div class="brand-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</div>
