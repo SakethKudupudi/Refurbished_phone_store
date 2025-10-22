@@ -1,0 +1,221 @@
+name: Hello World Tutorial
+
+# This workflow is designed to teach you GitHub Actions!
+# You can run it manually from the Actions tab
+
+on:
+  # Manual trigger - you can run this anytime!
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Your name'
+        required: true
+        default: 'Student'
+      greeting:
+        description: 'Choose a greeting'
+        required: true
+        type: choice
+        options:
+          - Hello
+          - Hi
+          - Hey
+          - Greetings
+
+  # Also runs on pushes to this file
+  push:
+    paths:
+      - '.github/workflows/hello-world.yml'
+
+env:
+  # Workflow-level environment variables
+  TUTORIAL_VERSION: '1.0.0'
+  LEARNING_MODE: 'active'
+
+jobs:
+  # Job 1: Simple greeting
+  greeting:
+    name: Say Hello
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Print greeting
+        run: |
+          echo "🎉 ${{ inputs.greeting || 'Hello' }}, ${{ inputs.name || 'GitHub Actions learner' }}!"
+          echo "Welcome to GitHub Actions Tutorial!"
+          echo "Tutorial Version: ${{ env.TUTORIAL_VERSION }}"
+      
+      - name: Show GitHub context
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit SHA: ${{ github.sha }}"
+      
+      - name: Current date and time
+        run: |
+          echo "Current date: $(date)"
+          echo "Timezone: $(date +%Z)"
+
+  # Job 2: Work with files
+  file-operations:
+    name: File Operations
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: List files in repository
+        run: |
+          echo "📁 Repository contents:"
+          ls -lah
+      
+      - name: Create a test file
+        run: |
+          echo "This file was created by GitHub Actions!" > hello.txt
+          echo "Date: $(date)" >> hello.txt
+          echo "Runner: ${{ runner.os }}" >> hello.txt
+          cat hello.txt
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: hello-file
+          path: hello.txt
+          retention-days: 1
+
+  # Job 3: Matrix strategy (runs multiple versions)
+  matrix-build:
+    name: Test on ${{ matrix.os }} with Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [18, 20, 22]
+        # This creates 9 jobs (3 OS × 3 Node versions)
+    
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      
+      - name: Show environment
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          echo "Node version: ${{ matrix.node }}"
+          node --version
+          npm --version
+
+  # Job 4: Conditional execution
+  conditional-job:
+    name: Conditional Steps
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Always runs
+        run: echo "This step always runs"
+      
+      - name: Only on main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "✅ This is the main branch!"
+      
+      - name: Only on pull request
+        if: github.event_name == 'pull_request'
+        run: echo "This is a pull request"
+      
+      - name: Only on manual trigger
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "🎯 This was manually triggered!"
+      
+      - name: Success message
+        if: success()
+        run: echo "✅ All previous steps succeeded!"
+
+  # Job 5: Job outputs and dependencies
+  generate-data:
+    name: Generate Data
+    runs-on: ubuntu-latest
+    outputs:
+      random-number: ${{ steps.random.outputs.number }}
+      timestamp: ${{ steps.time.outputs.timestamp }}
+    
+    steps:
+      - name: Generate random number
+        id: random
+        run: |
+          NUMBER=$((RANDOM % 100))
+          echo "number=$NUMBER" >> $GITHUB_OUTPUT
+          echo "Generated random number: $NUMBER"
+      
+      - name: Get timestamp
+        id: time
+        run: |
+          TIMESTAMP=$(date +%s)
+          echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+          echo "Current timestamp: $TIMESTAMP"
+
+  use-data:
+    name: Use Generated Data
+    runs-on: ubuntu-latest
+    needs: generate-data
+    
+    steps:
+      - name: Display data from previous job
+        run: |
+          echo "Random number from previous job: ${{ needs.generate-data.outputs.random-number }}"
+          echo "Timestamp from previous job: ${{ needs.generate-data.outputs.timestamp }}"
+
+  # Job 6: Download artifact from earlier job
+  download-artifact:
+    name: Download Artifact
+    runs-on: ubuntu-latest
+    needs: file-operations
+    
+    steps:
+      - name: Download the hello file
+        uses: actions/download-artifact@v3
+        with:
+          name: hello-file
+      
+      - name: Display downloaded file
+        run: |
+          echo "📥 Downloaded file contents:"
+          cat hello.txt
+
+  # Job 7: Summary and results
+  summary:
+    name: Tutorial Summary
+    runs-on: ubuntu-latest
+    needs: [greeting, file-operations, conditional-job, use-data, download-artifact]
+    if: always()
+    
+    steps:
+      - name: Create job summary
+        run: |
+          echo "# 🎓 GitHub Actions Tutorial Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## What you learned:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ How to trigger workflows" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Working with jobs and steps" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Using environment variables" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Matrix builds" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Conditional execution" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Job dependencies" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Modify this workflow and run it again" >> $GITHUB_STEP_SUMMARY
+          echo "2. Create your own workflow" >> $GITHUB_STEP_SUMMARY
+          echo "3. Explore the [GitHub Actions Marketplace](https://github.com/marketplace?type=actions)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Happy Learning! 🚀**" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Final message
+        run: |
+          echo "════════════════════════════════════════"
+          echo "   🎉 Congratulations! 🎉"
+          echo "   You've completed the tutorial!"
+          echo "════════════════════════════════════════"
