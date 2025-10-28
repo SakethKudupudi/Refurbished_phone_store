@@ -1,7 +1,7 @@
 package com.mobileparts.controller;
 
-import com.mobileparts.entity.CartItem;
 import com.mobileparts.service.CartService;
+import com.mobileparts.service.CartService.CartItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,13 @@ public class CartController {
     private CartService cartService;
 
     @GetMapping
-    public ResponseEntity<List<CartItem>> getCartItems(@RequestParam Long userId) {
+    public ResponseEntity<List<CartItemDTO>> getCartItems(@RequestParam Long userId) {
         return ResponseEntity.ok(cartService.getCartItems(userId));
     }
 
     @GetMapping("/summary")
     public ResponseEntity<CartSummary> getCartSummary(@RequestParam Long userId) {
-        List<CartItem> items = cartService.getCartItems(userId);
+        List<CartItemDTO> items = cartService.getCartItems(userId);
         BigDecimal totalAmount = cartService.getCartTotal(userId);
         Integer totalItems = cartService.getCartItemCount(userId);
         
@@ -48,8 +48,8 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<CartItem> addToCart(@RequestBody AddToCartRequest request) {
-        CartItem cartItem = cartService.addToCart(
+    public ResponseEntity<CartItemDTO> addToCart(@RequestBody AddToCartRequest request) {
+        CartItemDTO cartItem = cartService.addToCart(
             request.getUserId(),
             request.getComponentId(),
             request.getQuantity()
@@ -57,17 +57,20 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartItem);
     }
 
-    @PutMapping("/{cartItemId}")
-    public ResponseEntity<CartItem> updateCartItemQuantity(
-            @PathVariable Long cartItemId,
+    @PutMapping("/{componentId}")
+    public ResponseEntity<CartItemDTO> updateCartItemQuantity(
+            @PathVariable Long componentId,
+            @RequestParam Long userId,
             @RequestBody UpdateQuantityRequest request) {
-        CartItem updated = cartService.updateCartItemQuantity(cartItemId, request.getQuantity());
+        CartItemDTO updated = cartService.updateCartItemQuantity(userId, componentId, request.getQuantity());
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/{cartItemId}")
-    public ResponseEntity<Void> removeFromCart(@PathVariable Long cartItemId) {
-        cartService.removeFromCart(cartItemId);
+    @DeleteMapping("/{componentId}")
+    public ResponseEntity<Void> removeFromCart(
+            @PathVariable Long componentId,
+            @RequestParam Long userId) {
+        cartService.removeFromCart(userId, componentId);
         return ResponseEntity.noContent().build();
     }
 
@@ -115,17 +118,17 @@ public class CartController {
     }
 
     static class CartSummary {
-        private List<CartItem> items;
+        private List<CartItemDTO> items;
         private Integer totalItems;
         private BigDecimal totalAmount;
 
-        public CartSummary(List<CartItem> items, Integer totalItems, BigDecimal totalAmount) {
+        public CartSummary(List<CartItemDTO> items, Integer totalItems, BigDecimal totalAmount) {
             this.items = items;
             this.totalItems = totalItems;
             this.totalAmount = totalAmount;
         }
 
-        public List<CartItem> getItems() { return items; }
+        public List<CartItemDTO> getItems() { return items; }
         public Integer getTotalItems() { return totalItems; }
         public BigDecimal getTotalAmount() { return totalAmount; }
     }

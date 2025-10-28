@@ -33,6 +33,34 @@ spring:
     init:
       mode: never  # Let Flyway handle migrations
   
+  # Redis configuration for cart and session management
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: ${REDIS_SSL:false}
+      timeout: 60000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+  
+  session:
+    store-type: redis
+    redis:
+      namespace: spring:session
+      flush-mode: on_save
+    timeout: 30m
+  
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000  # 10 minutes
+  
   flyway:
     enabled: true
     baseline-on-migrate: true
