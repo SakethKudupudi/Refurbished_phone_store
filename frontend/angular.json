@@ -31,7 +31,7 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/iphone_images"
+              "src/application_images"
             ],
             "styles": [
               "src/styles.scss"

@@ -40,7 +40,7 @@ export class ModelListComponent implements OnInit {
       year: '2023',
       storage: '256GB',
       color: 'Titanium',
-      image: '/iphone_images/960px-IPhone_15_Pro_Max.png',
+      image: '/application_images/960px-IPhone_15_Pro_Max.png',
       partsAvailable: 45 
     },
     { 
@@ -50,7 +50,7 @@ export class ModelListComponent implements OnInit {
       year: '2023',
       storage: '128GB',
       color: 'Blue',
-      image: '/iphone_images/967px-IPhone_15_Pro.png',
+      image: '/application_images/967px-IPhone_15_Pro.png',
       partsAvailable: 42 
     },
     { 
@@ -60,7 +60,7 @@ export class ModelListComponent implements OnInit {
       year: '2023',
       storage: '128GB',
       color: 'Pink',
-      image: '/iphone_images/914px-IPhone_15.png',
+      image: '/application_images/914px-IPhone_15.png',
       partsAvailable: 44 
     },
     { 
@@ -70,7 +70,7 @@ export class ModelListComponent implements OnInit {
       year: '2022',
       storage: '512GB',
       color: 'Deep Purple',
-      image: '/iphone_images/954px-IPhone_14_Pro_Max.png',
+      image: '/application_images/954px-IPhone_14_Pro_Max.png',
       partsAvailable: 38 
     },
     { 
@@ -80,7 +80,7 @@ export class ModelListComponent implements OnInit {
       year: '2022',
       storage: '256GB',
       color: 'Space Black',
-      image: '/iphone_images/968px-IPhone_14_Pro.png',
+      image: '/application_images/968px-IPhone_14_Pro.png',
       partsAvailable: 36 
     },
     { 
@@ -90,7 +90,7 @@ export class ModelListComponent implements OnInit {
       year: '2022',
       storage: '128GB',
       color: 'Midnight',
-      image: '/iphone_images/897px-IPhone_14.png',
+      image: '/application_images/897px-IPhone_14.png',
       partsAvailable: 40 
     },
     { 
@@ -151,7 +151,7 @@ export class ModelListComponent implements OnInit {
       year: '2024',
       storage: '256GB',
       color: 'Titanium',
-      image: '/iphone_images/954px-IPhone_16_Pro_Max.png',
+      image: '/application_images/954px-IPhone_16_Pro_Max.png',
       partsAvailable: 40
     },
     {
@@ -161,7 +161,7 @@ export class ModelListComponent implements OnInit {
       year: '2024',
       storage: '128GB',
       color: 'Silver',
-      image: '/iphone_images/966px-IPhone_16_Pro.png',
+      image: '/application_images/966px-IPhone_16_Pro.png',
       partsAvailable: 45
     },
     {
@@ -171,7 +171,7 @@ export class ModelListComponent implements OnInit {
       year: '2024',
       storage: '128GB',
       color: 'Black',
-      image: '/iphone_images/975px-IPhone_16.png',
+      image: '/application_images/975px-IPhone_16.png',
       partsAvailable: 50
     },
     {
@@ -181,7 +181,7 @@ export class ModelListComponent implements OnInit {
       year: '2025',
       storage: '512GB',
       color: 'Silver',
-      image: '/iphone_images/926px-IPhone_17_Pro_Max_Silver.webp.png',
+      image: '/application_images/926px-IPhone_17_Pro_Max_Silver.webp.png',
       partsAvailable: 38
     },
     {
@@ -191,7 +191,7 @@ export class ModelListComponent implements OnInit {
       year: '2025',
       storage: '256GB',
       color: 'Cosmic Orange',
-      image: '/iphone_images/960px-IPhone_17_Pro_Cosmic_Orange.webp.png',
+      image: '/application_images/960px-IPhone_17_Pro_Cosmic_Orange.webp.png',
       partsAvailable: 42
     },
     {
@@ -201,7 +201,7 @@ export class ModelListComponent implements OnInit {
       year: '2025',
       storage: '128GB',
       color: 'Lavender',
-      image: '/iphone_images/682px-IPhone_17_Lavender.webp.png',
+      image: '/application_images/682px-IPhone_17_Lavender.webp.png',
       partsAvailable: 48
     },
   ];

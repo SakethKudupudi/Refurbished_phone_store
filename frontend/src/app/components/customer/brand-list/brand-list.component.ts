@@ -50,7 +50,7 @@ export class BrandListComponent implements OnInit {
       name: 'Apple', 
       category: 'APPLE', 
       description: 'iPhone parts',
-      logo: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&q=80'
+      logo: '/application_images/apple_main.jpg'
     }
   ];
 
