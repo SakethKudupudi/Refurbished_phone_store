@@ -76,6 +76,31 @@ mvn spring-boot:run
 - **Auth**: Firebase (Free Tier)
 - **Cost**: ~$5/month total 💰
 
+## ☁️ Azure Services Architecture
+
+| Service | Purpose |
+|---------|---------|
+| **Azure Static Web Apps** | Frontend hosting (Angular 17) |
+| **Azure App Service** | Backend deployment (Spring Boot) |
+| **Azure SQL Database** | Primary database (production) |
+| **Azure Blob Storage** | Product images storage |
+| **Firebase Authentication** | User authentication & authorization |
+| **Azure API Management** | API gateway (optional) |
+| **Azure Key Vault** | Secrets management |
+| **Azure Monitor** | Logging and monitoring |
+| **Azure OpenAI Service** | AI recommendations (planned) |
+| **Azure AI Search** | Vector search for products (planned) |
+| **Azure Communication Services** | Email notifications (planned) |
+
+### Current Implementation
+- ✅ Firebase Authentication (Email/Password + Google OAuth)
+- ✅ Azure App Service for Spring Boot backend
+- ✅ Azure Static Web Apps for Angular frontend
+- ✅ H2 Database (development) / Azure SQL (production ready)
+- 🚧 Blob Storage integration (planned)
+- 🚧 Azure Monitor setup (planned)
+- 🚧 AI/OpenAI features (planned)
+
 ## 📊 Available Data
 
 ### Phone Models (14)
