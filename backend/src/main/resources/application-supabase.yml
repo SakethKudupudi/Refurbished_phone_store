@@ -1,0 +1,64 @@
+spring:
+  datasource:
+    # Replace these with your Supabase credentials
+    # Get from: Supabase Dashboard > Project Settings > Database
+    url: jdbc:postgresql://YOUR_SUPABASE_HOST:5432/postgres
+    username: postgres
+    password: YOUR_SUPABASE_PASSWORD
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update  # Use 'update' for development, 'validate' for production
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+  
+  sql:
+    init:
+      mode: never  # Let Flyway handle migrations
+  
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: public
+  
+  # Disable Spring Cloud Azure for Supabase
+  cloud:
+    azure:
+      compatibility-verifier:
+        enabled: false
+  
+  autoconfigure:
+    exclude:
+      - com.azure.spring.cloud.autoconfigure.implementation.context.AzureTokenCredentialAutoConfiguration
+      - com.azure.spring.cloud.autoconfigure.implementation.compatibility.AzureCompatibilityVerifierAutoConfiguration
+      - com.azure.spring.cloud.autoconfigure.implementation.properties.AzureGlobalPropertiesAutoConfiguration
+
+# Firebase configuration (optional for Supabase, using Supabase Auth instead)
+firebase:
+  enabled: false
+
+# Logging
+logging:
+  level:
+    org.hibernate:
+      SQL: DEBUG
+      type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: INFO
+    com.mobileparts: DEBUG

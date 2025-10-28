@@ -3,7 +3,7 @@ spring:
     name: mobile-parts-backend
   
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:sqlite}
+    active: ${SPRING_PROFILES_ACTIVE:supabase}  # Default to supabase profile
   
   datasource:
     url: ${AZURE_POSTGRESQL_URL:jdbc:postgresql://localhost:5432/mobileparts}
