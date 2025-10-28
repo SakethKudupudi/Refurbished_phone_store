@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   constructor(private router: Router) {}

@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './category-selection.component.html',
-  styleUrl: './category-selection.component.scss'
+  styleUrls: ['./category-selection.component.scss']
 })
 export class CategorySelectionComponent {
 

@@ -16,7 +16,7 @@ interface CartItem {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './checkout.component.html',
-  styleUrl: './checkout.component.scss'
+  styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit {
   cartItems: CartItem[] = [];

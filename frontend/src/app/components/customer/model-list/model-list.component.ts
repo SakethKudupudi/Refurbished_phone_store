@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CustomerHeaderComponent } from '../customer-header/customer-header.component';
@@ -20,9 +20,9 @@ interface Model {
 @Component({
   selector: 'app-model-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomerHeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './model-list.component.html',
-  styleUrl: './model-list.component.scss'
+  styleUrls: ['./model-list.component.scss']
 })
 export class ModelListComponent implements OnInit {
   models: Model[] = [];

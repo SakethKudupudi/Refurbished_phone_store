@@ -47,7 +47,7 @@ interface SalesData {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   vendorName: string = 'Tech Parts Pro';
@@ -197,31 +197,40 @@ export class DashboardComponent implements OnInit {
 
   restockProduct(productId: number) {
     console.log('Restocking product:', productId);
-    // TODO: Implement restock functionality
-    alert('Restock functionality coming soon!');
+    // Navigate to inventory with filter for this product
+    this.router.navigate(['/vendor/inventory'], { 
+      queryParams: { productId: productId, action: 'restock' } 
+    });
   }
 
   addNewProduct() {
     console.log('Adding new product');
-    // TODO: Navigate to add product page
-    alert('Add product functionality coming soon!');
+    // Navigate to inventory page (where add product functionality should exist)
+    this.router.navigate(['/vendor/inventory'], { 
+      queryParams: { action: 'add' } 
+    });
   }
 
   updatePrices() {
     console.log('Updating prices');
-    // TODO: Navigate to price management
-    alert('Price update functionality coming soon!');
+    // Navigate to inventory with price update mode
+    this.router.navigate(['/vendor/inventory'], { 
+      queryParams: { action: 'updatePrices' } 
+    });
   }
 
   viewReports() {
     console.log('Viewing reports');
-    // TODO: Navigate to reports page
-    alert('Reports functionality coming soon!');
+    // In a real app, this would navigate to a reports page
+    // For now, show a helpful message
+    alert('Reports Dashboard - Coming Soon!\n\nYou can view:\n• Sales Analytics\n• Revenue Trends\n• Product Performance\n• Customer Insights');
   }
 
   manageShipping() {
     console.log('Managing shipping');
-    // TODO: Navigate to shipping management
-    alert('Shipping management coming soon!');
+    // Navigate to orders page with shipping filter
+    this.router.navigate(['/vendor/orders'], { 
+      queryParams: { filter: 'shipping' } 
+    });
   }
 }

@@ -47,7 +47,7 @@ interface TopVendor {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   platformStats: PlatformStats = {

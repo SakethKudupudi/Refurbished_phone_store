@@ -20,7 +20,7 @@ interface CartItem {
   standalone: true,
   imports: [CommonModule, CustomerHeaderComponent],
   templateUrl: './shopping-cart.component.html',
-  styleUrl: './shopping-cart.component.scss',
+  styleUrls: ['./shopping-cart.component.scss'],
   animations: [
     trigger('listAnimation', [
       transition('* => *', [

@@ -8,7 +8,7 @@ import { filter } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './customer-header.component.html',
-  styleUrl: './customer-header.component.scss'
+  styleUrls: ['./customer-header.component.scss']
 })
 export class CustomerHeaderComponent implements OnInit {
   cartItemCount: number = 0;

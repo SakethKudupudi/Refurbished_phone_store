@@ -7,9 +7,9 @@ import { CustomerHeaderComponent } from '../customer-header/customer-header.comp
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, CustomerHeaderComponent, FormsModule],
+  imports: [CommonModule],
   templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.scss'
+  styleUrls: ['./landing-page.component.scss']
 })
 export class LandingPageComponent {
   aiSearchQuery: string = '';

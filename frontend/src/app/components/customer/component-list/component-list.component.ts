@@ -27,7 +27,7 @@ interface ComponentPart {
   standalone: true,
   imports: [CommonModule, CustomerHeaderComponent],
   templateUrl: './component-list.component.html',
-  styleUrl: './component-list.component.scss',
+  styleUrls: ['./component-list.component.scss'],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [

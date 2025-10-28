@@ -32,7 +32,7 @@ interface NewProduct {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './inventory.component.html',
-  styleUrl: './inventory.component.scss'
+  styleUrls: ['./inventory.component.scss']
 })
 export class InventoryComponent implements OnInit {
   showAddProductModal: boolean = false;
