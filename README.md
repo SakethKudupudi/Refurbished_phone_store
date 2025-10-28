@@ -157,28 +157,7 @@ final_project/
 └── infrastructure/     # Terraform configs (optional)
 ```
 
-## 🛠️ Services Overview
-
-| Service | Location | Purpose | Technology |
-|---------|----------|---------|------------|
-| **Auth Service** | `frontend/src/app/services/firebase-auth.service.ts` | User authentication & session management | Firebase Auth |
-| **Brand Service** | `frontend/src/app/services/brand.service.ts` | Fetch and manage phone brands data | Angular HTTP Client |
-| **Model Service** | `frontend/src/app/services/model.service.ts` | Fetch and manage phone models by brand | Angular HTTP Client |
-| **Component Service** | `frontend/src/app/services/component.service.ts` | Fetch and manage replacement parts/components | Angular HTTP Client |
-| **Cart Service** | `frontend/src/app/services/cart.service.ts` | Shopping cart state & operations | RxJS BehaviorSubject |
-| **Order Service** | `frontend/src/app/services/order.service.ts` | Order creation & management | Angular HTTP Client |
-| **User Service** | `frontend/src/app/services/user.service.ts` | User profile & preferences | Angular HTTP Client |
-| **GraphQL Service** | `frontend/src/app/services/graphql.service.ts` | GraphQL API queries & mutations | Apollo Angular |
-| **Auth Interceptor** | `frontend/src/app/interceptors/auth.interceptor.ts` | Attach Firebase tokens to API requests | HTTP Interceptor |
-| **Error Interceptor** | `frontend/src/app/interceptors/error.interceptor.ts` | Global error handling & logging | HTTP Interceptor |
-| **Auth Guard** | `frontend/src/app/guards/auth.guard.ts` | Route protection (requires login) | Angular Router Guard |
-| **Role Guard** | `frontend/src/app/guards/role.guard.ts` | Role-based route access control | Angular Router Guard |
-| **Backend API** | `backend/src/main/java/com/mobileparts/controller/` | RESTful endpoints for CRUD operations | Spring Boot REST |
-| **GraphQL API** | `backend/src/main/java/com/mobileparts/resolver/` | GraphQL queries & mutations | Spring GraphQL |
-| **Firebase Admin** | `backend/src/main/java/com/mobileparts/config/FirebaseConfig.java` | Token verification & user management | Firebase Admin SDK |
-| **Security Config** | `backend/src/main/java/com/mobileparts/config/SecurityConfig.java` | CORS, authentication filters | Spring Security |
-
-## 🔐 Authentication
+##  Authentication
 
 **Firebase Authentication** with multiple sign-in methods:
 - ✉️ Email/Password registration
