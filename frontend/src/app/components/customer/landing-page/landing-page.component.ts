@@ -7,7 +7,7 @@ import { CustomerHeaderComponent } from '../customer-header/customer-header.comp
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, CustomerHeaderComponent],
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.scss']
 })

@@ -20,7 +20,7 @@ interface Model {
 @Component({
   selector: 'app-model-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, CustomerHeaderComponent],
   templateUrl: './model-list.component.html',
   styleUrls: ['./model-list.component.scss']
 })
