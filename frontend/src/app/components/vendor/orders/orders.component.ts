@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 interface Order {
   id: string;
@@ -80,11 +80,25 @@ export class OrdersComponent implements OnInit {
   estimatedDelivery: string = '';
   cancellationReason: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.loadOrders();
     this.calculateStats();
+    
+    // Handle query params from Quick Actions navigation
+    this.route.queryParams.subscribe(params => {
+      if (params['filter']) {
+        // Apply filter based on query param
+        if (params['filter'] === 'shipping') {
+          this.filterStatus = 'shipped';
+          this.applyFilters();
+        }
+      }
+    });
   }
 
   loadOrders(): void {
