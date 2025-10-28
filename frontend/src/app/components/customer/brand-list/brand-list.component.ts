@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CustomerHeaderComponent } from '../customer-header/customer-header.component';
+import { BrandService, Brand } from '../../../services/brand.service';
 
 @Component({
   selector: 'app-brand-list',
@@ -55,28 +56,58 @@ export class BrandListComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private brandService: BrandService
   ) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.category = params['category'];
-      this.loadBrands();
+      
+      // Set brands immediately from mock data
+      if (this.category === 'APPLE') {
+        this.brands = this.mockBrands.filter(b => b.category === 'APPLE');
+        this.loading = false;
+        if (this.brands.length > 0) {
+          // Auto-navigate to Apple models page (brand ID 5)
+          this.selectBrand(5);
+        }
+      } else {
+        // ANDROID category - show brands immediately
+        this.brands = this.mockBrands.filter(b => b.category === 'ANDROID');
+        this.loading = false;
+        // Try to load from API in background
+        this.loadBrands();
+      }
     });
   }
 
   loadBrands() {
-    setTimeout(() => {
-      if (this.category === 'APPLE') {
-        this.brands = this.mockBrands.filter(b => b.category === 'APPLE');
-        if (this.brands.length > 0) {
-          this.selectBrand(this.brands[0].id);
+    this.brandService.getAllBrands().subscribe({
+      next: (data: Brand[]) => {
+        if (data && data.length > 0) {
+          // Map brands to include category and images
+          const mappedBrands = data.map(brand => {
+            const mockBrand = this.mockBrands.find(mb => mb.name.toLowerCase() === brand.name.toLowerCase());
+            return {
+              id: brand.id,
+              name: brand.name,
+              category: brand.name === 'Apple' ? 'APPLE' : 'ANDROID',
+              description: mockBrand?.description || `${brand.name} smartphones`,
+              logo: mockBrand?.logo || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80'
+            };
+          });
+
+          const androidBrands = mappedBrands.filter(b => b.category === 'ANDROID');
+          if (androidBrands.length > 0) {
+            this.brands = androidBrands;
+          }
         }
-      } else {
-        this.brands = this.mockBrands.filter(b => b.category === 'ANDROID');
+      },
+      error: (err: any) => {
+        // Keep mock data on error
       }
-      this.loading = false;
-    }, 500);
+    });
   }
 
   goBack() {

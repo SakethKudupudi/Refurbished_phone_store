@@ -1,7 +1,6 @@
 package com.mobileparts.service;
 
 import com.mobileparts.entity.*;
-import com.mobileparts.repository.CartItemRepository;
 import com.mobileparts.repository.OrderRepository;
 import com.mobileparts.repository.OrderItemRepository;
 import com.mobileparts.repository.UserRepository;
@@ -25,16 +24,10 @@ public class OrderService {
     private OrderItemRepository orderItemRepository;
 
     @Autowired
-    private CartItemRepository cartItemRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private CartService cartService;
-
-    @Autowired
-    private ComponentService componentService;
 
     public Order createOrder(Long userId, String shippingAddress, String paymentMethod) {
         User user = userRepository.findById(userId)
@@ -48,12 +41,19 @@ public class OrderService {
         // Create order
         Order order = new Order();
         order.setCustomer(user);
-        order.setStatus(Order.Status.PENDING);
-        order.setShippingAddress(shippingAddress);
+        order.setStatus(Order.OrderStatus.PENDING);
+        // Parse shipping address - for now just set the name field
+        // In production, parse the address string properly
+        order.setShippingName(user.getFullName());
+        order.setShippingAddressLine1(shippingAddress != null ? shippingAddress : "");
+        order.setShippingCity("");
+        order.setShippingState("");
+        order.setShippingPostalCode("");
+        order.setShippingCountry("");
         order.setPaymentMethod(paymentMethod);
         order.setPaymentStatus(Order.PaymentStatus.PENDING);
         
-        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal subtotal = BigDecimal.ZERO;
 
         // Save order first to get ID
         order = orderRepository.save(order);
@@ -64,19 +64,25 @@ public class OrderService {
             orderItem.setOrder(order);
             orderItem.setComponent(cartItem.getComponent());
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getPrice());
+            // Get price from component, not cartItem
+            BigDecimal itemPrice = cartItem.getComponent().getPrice();
+            orderItem.setUnitPrice(itemPrice);
+            orderItem.setComponentName(cartItem.getComponent().getName());
+            orderItem.setComponentSku(cartItem.getComponent().getSku());
+            orderItem.calculateTotalPrice();
             
-            BigDecimal itemTotal = cartItem.getPrice().multiply(new BigDecimal(cartItem.getQuantity()));
-            totalAmount = totalAmount.add(itemTotal);
+            BigDecimal itemTotal = itemPrice.multiply(new BigDecimal(cartItem.getQuantity()));
+            subtotal = subtotal.add(itemTotal);
             
             orderItemRepository.save(orderItem);
 
             // Update component stock
             Component component = cartItem.getComponent();
-            component.setQuantityInStock(component.getQuantityInStock() - cartItem.getQuantity());
+            component.setQuantityAvailable(component.getQuantityAvailable() - cartItem.getQuantity());
         }
 
-        order.setTotalAmount(totalAmount);
+        order.setSubtotal(subtotal);
+        order.setTotalAmount(subtotal.add(order.getTaxAmount()).add(order.getShippingAmount()));
         order = orderRepository.save(order);
 
         // Clear cart
@@ -97,7 +103,7 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public Order updateOrderStatus(Long orderId, Order.Status status) {
+    public Order updateOrderStatus(Long orderId, Order.OrderStatus status) {
         return orderRepository.findById(orderId)
                 .map(order -> {
                     order.setStatus(status);
@@ -110,8 +116,8 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .map(order -> {
                     order.setPaymentStatus(paymentStatus);
-                    if (paymentStatus == Order.PaymentStatus.PAID) {
-                        order.setStatus(Order.Status.PROCESSING);
+                    if (paymentStatus == Order.PaymentStatus.CAPTURED) {
+                        order.setStatus(Order.OrderStatus.PROCESSING);
                     }
                     return orderRepository.save(order);
                 })
@@ -129,8 +135,6 @@ public class OrderService {
     }
 
     public List<Object[]> getTopSellingComponents(int limit) {
-        return orderItemRepository.findTopSellingComponents().stream()
-                .limit(limit)
-                .toList();
+        return orderItemRepository.findTopSellingComponents(limit);
     }
 }

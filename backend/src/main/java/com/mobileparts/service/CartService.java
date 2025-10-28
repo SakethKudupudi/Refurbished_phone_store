@@ -48,7 +48,7 @@ public class CartService {
             cartItem.setUser(user);
             cartItem.setComponent(component);
             cartItem.setQuantity(quantity);
-            cartItem.setPrice(component.getPrice());
+            // CartItem doesn't have a price field - price comes from component
             return cartItemRepository.save(cartItem);
         }
     }
@@ -77,7 +77,7 @@ public class CartService {
     public BigDecimal getCartTotal(Long userId) {
         List<CartItem> items = getCartItems(userId);
         return items.stream()
-                .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
+                .map(item -> item.getComponent().getPrice().multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

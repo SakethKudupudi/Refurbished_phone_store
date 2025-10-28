@@ -32,7 +32,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<User> getUsersByRole(User.Role role) {
+    public List<User> getUsersByRole(User.UserRole role) {
         return userRepository.findByRole(role);
     }
 
@@ -43,11 +43,17 @@ public class UserService {
     public User updateUser(Long id, User updatedUser) {
         return userRepository.findById(id)
                 .map(user -> {
-                    user.setName(updatedUser.getName());
-                    user.setEmail(updatedUser.getEmail());
-                    user.setPhone(updatedUser.getPhone());
-                    user.setAddress(updatedUser.getAddress());
-                    user.setAzureAdId(updatedUser.getAzureAdId());
+                    if (updatedUser.getFirstName() != null) user.setFirstName(updatedUser.getFirstName());
+                    if (updatedUser.getLastName() != null) user.setLastName(updatedUser.getLastName());
+                    if (updatedUser.getEmail() != null) user.setEmail(updatedUser.getEmail());
+                    if (updatedUser.getPhoneNumber() != null) user.setPhoneNumber(updatedUser.getPhoneNumber());
+                    if (updatedUser.getAddressLine1() != null) user.setAddressLine1(updatedUser.getAddressLine1());
+                    if (updatedUser.getAddressLine2() != null) user.setAddressLine2(updatedUser.getAddressLine2());
+                    if (updatedUser.getCity() != null) user.setCity(updatedUser.getCity());
+                    if (updatedUser.getState() != null) user.setState(updatedUser.getState());
+                    if (updatedUser.getPostalCode() != null) user.setPostalCode(updatedUser.getPostalCode());
+                    if (updatedUser.getCountry() != null) user.setCountry(updatedUser.getCountry());
+                    if (updatedUser.getAzureAdObjectId() != null) user.setAzureAdObjectId(updatedUser.getAzureAdObjectId());
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));

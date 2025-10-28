@@ -74,13 +74,14 @@ public class ComponentService {
     public Component updateComponent(Long id, Component updatedComponent) {
         return componentRepository.findById(id)
                 .map(component -> {
-                    component.setName(updatedComponent.getName());
-                    component.setType(updatedComponent.getType());
-                    component.setDescription(updatedComponent.getDescription());
-                    component.setPrice(updatedComponent.getPrice());
-                    component.setQuantityInStock(updatedComponent.getQuantityInStock());
-                    component.setImageUrl(updatedComponent.getImageUrl());
-                    component.setSpecifications(updatedComponent.getSpecifications());
+                    if (updatedComponent.getName() != null) component.setName(updatedComponent.getName());
+                    if (updatedComponent.getComponentType() != null) component.setComponentType(updatedComponent.getComponentType());
+                    if (updatedComponent.getDescription() != null) component.setDescription(updatedComponent.getDescription());
+                    if (updatedComponent.getPrice() != null) component.setPrice(updatedComponent.getPrice());
+                    if (updatedComponent.getQuantityAvailable() != null) component.setQuantityAvailable(updatedComponent.getQuantityAvailable());
+                    if (updatedComponent.getImageUrl() != null) component.setImageUrl(updatedComponent.getImageUrl());
+                    if (updatedComponent.getManufacturer() != null) component.setManufacturer(updatedComponent.getManufacturer());
+                    if (updatedComponent.getWarrantyMonths() != null) component.setWarrantyMonths(updatedComponent.getWarrantyMonths());
                     return componentRepository.save(component);
                 })
                 .orElseThrow(() -> new RuntimeException("Component not found with id: " + id));
@@ -97,7 +98,7 @@ public class ComponentService {
     public void updateStock(Long id, Integer quantity) {
         componentRepository.findById(id)
                 .ifPresent(component -> {
-                    component.setQuantityInStock(component.getQuantityInStock() + quantity);
+                    component.setQuantityAvailable(component.getQuantityAvailable() + quantity);
                     componentRepository.save(component);
                 });
     }

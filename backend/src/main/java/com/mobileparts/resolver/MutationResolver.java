@@ -2,12 +2,11 @@ package com.mobileparts.resolver;
 
 import com.mobileparts.entity.*;
 import com.mobileparts.service.*;
-import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
-@Component
-public class MutationResolver implements GraphQLMutationResolver {
+@Controller
+public class MutationResolver {
 
     @Autowired
     private UserService userService;
@@ -28,23 +27,25 @@ public class MutationResolver implements GraphQLMutationResolver {
     private OrderService orderService;
 
     // User Mutations
-    public User createUser(String name, String email, String password, String phone, String address, String role) {
+    public User createUser(String firstName, String lastName, String email, String password, String phoneNumber, String addressLine1, String role) {
         User user = new User();
-        user.setName(name);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
         user.setEmail(email);
-        user.setPasswordHash(password); // Should be hashed in real implementation
-        user.setPhone(phone);
-        user.setAddress(address);
-        user.setRole(User.Role.valueOf(role));
+        // Note: password should be hashed in real implementation
+        user.addRole(User.UserRole.valueOf(role));
+        user.setPhoneNumber(phoneNumber);
+        user.setAddressLine1(addressLine1);
         return userService.createUser(user);
     }
 
-    public User updateUser(Long id, String name, String email, String phone, String address) {
+    public User updateUser(Long id, String firstName, String lastName, String email, String phoneNumber, String addressLine1) {
         User user = new User();
-        user.setName(name);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
         user.setEmail(email);
-        user.setPhone(phone);
-        user.setAddress(address);
+        user.setPhoneNumber(phoneNumber);
+        user.setAddressLine1(addressLine1);
         return userService.updateUser(id, user);
     }
 
@@ -57,7 +58,7 @@ public class MutationResolver implements GraphQLMutationResolver {
     public Brand createBrand(String name, String category, String logoUrl, String description) {
         Brand brand = new Brand();
         brand.setName(name);
-        brand.setCategory(Brand.Category.valueOf(category));
+        brand.setCategory(Brand.BrandCategory.valueOf(category));
         brand.setLogoUrl(logoUrl);
         brand.setDescription(description);
         return brandService.createBrand(brand);
@@ -66,7 +67,7 @@ public class MutationResolver implements GraphQLMutationResolver {
     public Brand updateBrand(Long id, String name, String category, String logoUrl, String description) {
         Brand brand = new Brand();
         brand.setName(name);
-        brand.setCategory(Brand.Category.valueOf(category));
+        brand.setCategory(Brand.BrandCategory.valueOf(category));
         brand.setLogoUrl(logoUrl);
         brand.setDescription(description);
         return brandService.updateBrand(id, brand);
@@ -78,7 +79,7 @@ public class MutationResolver implements GraphQLMutationResolver {
     }
 
     // Model Mutations
-    public Model createModel(Long brandId, String name, Integer releaseYear, String imageUrl, String specifications) {
+    public Model createModel(Long brandId, String name, Integer releaseYear, String imageUrl, String description) {
         Brand brand = brandService.getBrandById(brandId)
                 .orElseThrow(() -> new RuntimeException("Brand not found"));
         
@@ -87,7 +88,7 @@ public class MutationResolver implements GraphQLMutationResolver {
         model.setName(name);
         model.setReleaseYear(releaseYear);
         model.setImageUrl(imageUrl);
-        model.setSpecifications(specifications);
+        model.setDescription(description);
         return modelService.createModel(model);
     }
 
@@ -98,8 +99,8 @@ public class MutationResolver implements GraphQLMutationResolver {
 
     // Component Mutations
     public Component createComponent(Long modelId, Long vendorId, String name, String type, 
-                                    String description, String price, Integer quantityInStock,
-                                    String imageUrl, String specifications) {
+                                    String description, String price, Integer quantityAvailable,
+                                    String imageUrl, String manufacturer) {
         Model model = modelService.getModelById(modelId)
                 .orElseThrow(() -> new RuntimeException("Model not found"));
         User vendor = userService.getUserById(vendorId)
@@ -109,12 +110,12 @@ public class MutationResolver implements GraphQLMutationResolver {
         component.setModel(model);
         component.setVendor(vendor);
         component.setName(name);
-        component.setType(Component.ComponentType.valueOf(type));
+        component.setComponentType(Component.ComponentType.valueOf(type));
         component.setDescription(description);
         component.setPrice(new java.math.BigDecimal(price));
-        component.setQuantityInStock(quantityInStock);
+        component.setQuantityAvailable(quantityAvailable);
         component.setImageUrl(imageUrl);
-        component.setSpecifications(specifications);
+        component.setManufacturer(manufacturer);
         
         return componentService.createComponent(component);
     }
@@ -157,7 +158,7 @@ public class MutationResolver implements GraphQLMutationResolver {
     }
 
     public Order updateOrderStatus(Long orderId, String status) {
-        return orderService.updateOrderStatus(orderId, Order.Status.valueOf(status));
+        return orderService.updateOrderStatus(orderId, Order.OrderStatus.valueOf(status));
     }
 
     public Order updatePaymentStatus(Long orderId, String paymentStatus) {

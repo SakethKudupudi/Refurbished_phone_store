@@ -28,7 +28,7 @@ public class BrandService {
         return brandRepository.findAllActive();
     }
 
-    public List<Brand> getBrandsByCategory(Brand.Category category) {
+    public List<Brand> getBrandsByCategory(Brand.BrandCategory category) {
         return brandRepository.findByCategory(category);
     }
 

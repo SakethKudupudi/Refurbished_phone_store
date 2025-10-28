@@ -2,17 +2,15 @@ package com.mobileparts.resolver;
 
 import com.mobileparts.entity.*;
 import com.mobileparts.service.*;
-import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
-public class QueryResolver implements GraphQLQueryResolver {
+@Controller
+public class QueryResolver {
 
     @Autowired
     private UserService userService;
@@ -48,7 +46,7 @@ public class QueryResolver implements GraphQLQueryResolver {
     }
 
     public List<User> getUsersByRole(String role) {
-        return userService.getUsersByRole(User.Role.valueOf(role));
+        return userService.getUsersByRole(User.UserRole.valueOf(role));
     }
 
     // Brand Queries
@@ -62,7 +60,7 @@ public class QueryResolver implements GraphQLQueryResolver {
     }
 
     public List<Brand> getBrandsByCategory(String category) {
-        return brandService.getBrandsByCategory(Brand.Category.valueOf(category));
+        return brandService.getBrandsByCategory(Brand.BrandCategory.valueOf(category));
     }
 
     // Model Queries

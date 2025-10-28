@@ -1,5 +1,6 @@
 package com.mobileparts.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -30,6 +31,7 @@ public class Component extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "model_id", nullable = false)
+    @JsonBackReference
     private Model model;
 
     @Enumerated(EnumType.STRING)

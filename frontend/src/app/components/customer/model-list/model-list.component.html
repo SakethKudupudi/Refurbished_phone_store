@@ -11,6 +11,22 @@
     </button>
     <h1 class="model-title animate-fade-in">{{ brandName }} Models</h1>
     <p class="model-subtitle animate-fade-in delay-1">Select your device model</p>
+    
+    <!-- Sorting Controls -->
+    <div class="sort-controls animate-fade-in delay-2">
+      <label for="sortOrder" class="sort-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="14" y2="18"></line>
+        </svg>
+        Sort by Year:
+      </label>
+      <select id="sortOrder" class="sort-select" [(ngModel)]="sortOrder" (change)="sortModels()">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+      </select>
+    </div>
   </header>
 
   <div class="loading-spinner" *ngIf="loading">

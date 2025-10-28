@@ -39,10 +39,11 @@ public class ModelService {
     public Model updateModel(Long id, Model updatedModel) {
         return modelRepository.findById(id)
                 .map(model -> {
-                    model.setName(updatedModel.getName());
-                    model.setReleaseYear(updatedModel.getReleaseYear());
-                    model.setImageUrl(updatedModel.getImageUrl());
-                    model.setSpecifications(updatedModel.getSpecifications());
+                    if (updatedModel.getName() != null) model.setName(updatedModel.getName());
+                    if (updatedModel.getReleaseYear() != null) model.setReleaseYear(updatedModel.getReleaseYear());
+                    if (updatedModel.getImageUrl() != null) model.setImageUrl(updatedModel.getImageUrl());
+                    if (updatedModel.getDescription() != null) model.setDescription(updatedModel.getDescription());
+                    if (updatedModel.getModelNumber() != null) model.setModelNumber(updatedModel.getModelNumber());
                     return modelRepository.save(model);
                 })
                 .orElseThrow(() -> new RuntimeException("Model not found with id: " + id));

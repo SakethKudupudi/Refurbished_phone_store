@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version>
+        <version>3.4.0</version>
         <relativePath/>
     </parent>
     
@@ -23,8 +23,11 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <azure.version>5.12.0</azure.version>
-        <graphql.version>1.2.5</graphql.version>
+    <azure.version>5.12.0</azure.version>
+    <graphql.version>1.2.5</graphql.version>
+    <!-- Pin commonly used dependency versions -->
+    <lombok.version>1.18.30</lombok.version>
+    <commons-lang3.version>3.13.0</commons-lang3.version>
     </properties>
     
     <dependencies>
@@ -84,6 +87,11 @@
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-sqlserver</artifactId>
+        </dependency>
+        
         <!-- Azure SDK -->
         <dependency>
             <groupId>com.azure.spring</groupId>
@@ -93,31 +101,43 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
+            <version>12.26.1</version>
         </dependency>
         
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-security-keyvault-secrets</artifactId>
+            <version>4.8.6</version>
         </dependency>
         
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-ai-openai</artifactId>
+            <version>1.0.0-beta.12</version>
         </dependency>
         
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-search-documents</artifactId>
+            <version>11.7.2</version>
         </dependency>
         
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-communication-email</artifactId>
+            <version>1.1.0</version>
         </dependency>
         
         <dependency>
             <groupId>com.azure.spring</groupId>
             <artifactId>spring-cloud-azure-starter-storage-blob</artifactId>
+        </dependency>
+        
+        <!-- Firebase Admin SDK for token verification -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.3.0</version>
         </dependency>
         
         <!-- JWT -->
@@ -190,7 +210,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
         
         <!-- Development Tools -->
@@ -233,10 +253,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <release>21</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

@@ -252,6 +252,68 @@
   }
 }
 
+// Sort Controls
+.sort-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  backdrop-filter: blur(20px);
+
+  .sort-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #a1a1a6;
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+
+    svg {
+      opacity: 0.7;
+    }
+  }
+
+  .sort-select {
+    flex: 1;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: #f5f5f7;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    &:focus {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #0071e3;
+      box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+    }
+
+    option {
+      background: #1d1d1f;
+      color: #f5f5f7;
+      padding: 0.5rem;
+    }
+  }
+}
+
 // Custom scrollbar
 ::-webkit-scrollbar {
   width: 10px;
@@ -269,3 +331,4 @@
     background: #515154;
   }
 }
+
