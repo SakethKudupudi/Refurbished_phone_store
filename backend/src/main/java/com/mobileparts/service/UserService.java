@@ -53,7 +53,7 @@ public class UserService {
                     if (updatedUser.getState() != null) user.setState(updatedUser.getState());
                     if (updatedUser.getPostalCode() != null) user.setPostalCode(updatedUser.getPostalCode());
                     if (updatedUser.getCountry() != null) user.setCountry(updatedUser.getCountry());
-                    if (updatedUser.getAzureAdObjectId() != null) user.setAzureAdObjectId(updatedUser.getAzureAdObjectId());
+                    if (updatedUser.getFirebaseUid() != null) user.setFirebaseUid(updatedUser.getFirebaseUid());
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));

@@ -4,6 +4,7 @@ import com.mobileparts.entity.*;
 import com.mobileparts.repository.OrderRepository;
 import com.mobileparts.repository.OrderItemRepository;
 import com.mobileparts.repository.UserRepository;
+import com.mobileparts.repository.ComponentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,9 @@ public class OrderService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private ComponentRepository componentRepository;
 
     @Autowired
     private CartService cartService;
@@ -33,7 +37,7 @@ public class OrderService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<CartItem> cartItems = cartService.getCartItems(userId);
+        List<CartService.CartItemDTO> cartItems = cartService.getCartItems(userId);
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
@@ -59,26 +63,29 @@ public class OrderService {
         order = orderRepository.save(order);
 
         // Create order items from cart items
-        for (CartItem cartItem : cartItems) {
+        for (CartService.CartItemDTO cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
-            orderItem.setComponent(cartItem.getComponent());
+            
+            // Fetch component from database
+            Component component = componentRepository.findById(cartItem.getComponentId())
+                    .orElseThrow(() -> new RuntimeException("Component not found: " + cartItem.getComponentId()));
+            
+            orderItem.setComponent(component);
             orderItem.setQuantity(cartItem.getQuantity());
-            // Get price from component, not cartItem
-            BigDecimal itemPrice = cartItem.getComponent().getPrice();
-            orderItem.setUnitPrice(itemPrice);
-            orderItem.setComponentName(cartItem.getComponent().getName());
-            orderItem.setComponentSku(cartItem.getComponent().getSku());
+            orderItem.setUnitPrice(cartItem.getPrice());
+            orderItem.setComponentName(cartItem.getComponentName());
+            orderItem.setComponentSku(component.getSku());
             orderItem.calculateTotalPrice();
             
-            BigDecimal itemTotal = itemPrice.multiply(new BigDecimal(cartItem.getQuantity()));
+            BigDecimal itemTotal = cartItem.getPrice().multiply(new BigDecimal(cartItem.getQuantity()));
             subtotal = subtotal.add(itemTotal);
             
             orderItemRepository.save(orderItem);
 
             // Update component stock
-            Component component = cartItem.getComponent();
             component.setQuantityAvailable(component.getQuantityAvailable() - cartItem.getQuantity());
+            componentRepository.save(component);
         }
 
         order.setSubtotal(subtotal);

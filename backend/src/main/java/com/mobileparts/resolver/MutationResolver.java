@@ -134,16 +134,16 @@ public class MutationResolver {
     }
 
     // Cart Mutations
-    public CartItem addToCart(Long userId, Long componentId, Integer quantity) {
+    public CartService.CartItemDTO addToCart(Long userId, Long componentId, Integer quantity) {
         return cartService.addToCart(userId, componentId, quantity);
     }
 
-    public CartItem updateCartItemQuantity(Long cartItemId, Integer quantity) {
-        return cartService.updateCartItemQuantity(cartItemId, quantity);
+    public CartService.CartItemDTO updateCartItemQuantity(Long userId, Long componentId, Integer quantity) {
+        return cartService.updateCartItemQuantity(userId, componentId, quantity);
     }
 
-    public Boolean removeFromCart(Long cartItemId) {
-        cartService.removeFromCart(cartItemId);
+    public Boolean removeFromCart(Long userId, Long componentId) {
+        cartService.removeFromCart(userId, componentId);
         return true;
     }
 

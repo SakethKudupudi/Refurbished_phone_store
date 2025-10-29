@@ -109,7 +109,7 @@ public class QueryResolver {
     }
 
     // Cart Queries
-    public List<CartItem> getCartItems(Long userId) {
+    public List<CartService.CartItemDTO> getCartItems(Long userId) {
         return cartService.getCartItems(userId);
     }
 
