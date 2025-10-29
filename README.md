@@ -65,38 +65,36 @@ mvn spring-boot:run
 - **Framework**: Spring Boot 3.4.0
 - **Language**: Java 21
 - **Build**: Maven 3.9.11
-- **Database**: H2 (dev) / Azure SQL (prod)
+- **Database**: Supabase PostgreSQL
 - **Auth**: Firebase Admin SDK
 - **API**: RESTful + GraphQL
 
 ### Infrastructure
 - **Hosting**: Azure App Service (F1 Free Tier)
 - **Frontend**: Azure Static Web Apps (Free Tier)
-- **Database**: Azure SQL Database (Free Tier Available)
+- **Database**: Supabase PostgreSQL (Free Tier)
 - **Auth**: Firebase (Free Tier)
-- **Cost**: ~$5/month total 💰
+- **Cache/Session**: Redis (Local/Azure)
+- **Cost**: ~$0-5/month total 💰
 
-## ☁️ Azure Services Architecture
+## ☁️ Services Architecture
 
 | Service | Purpose |
 |---------|---------|
 | **Azure Static Web Apps** | Frontend hosting (Angular 17) |
 | **Azure App Service** | Backend deployment (Spring Boot) |
-| **Azure SQL Database** | Primary database (production) |
-| **Azure Blob Storage** | Product images storage |
+| **Supabase PostgreSQL** | Primary database (production) |
 | **Firebase Authentication** | User authentication & authorization |
-| **Azure API Management** | API gateway (optional) |
-| **Azure Key Vault** | Secrets management |
+| **Redis** | Shopping cart & session storage |
+| **Azure Blob Storage** | Product images storage (optional) |
 | **Azure Monitor** | Logging and monitoring |
-| **Azure OpenAI Service** | AI recommendations (planned) |
-| **Azure AI Search** | Vector search for products (planned) |
-| **Azure Communication Services** | Email notifications (planned) |
 
 ### Current Implementation
 - ✅ Firebase Authentication (Email/Password + Google OAuth)
+- ✅ Supabase PostgreSQL database (production ready)
+- ✅ Redis for cart and session management
 - ✅ Azure App Service for Spring Boot backend
 - ✅ Azure Static Web Apps for Angular frontend
-- ✅ H2 Database (development) / Azure SQL (production ready)
 - 🚧 Blob Storage integration (planned)
 - 🚧 Azure Monitor setup (planned)
 - 🚧 AI/OpenAI features (planned)
@@ -199,7 +197,8 @@ mvn verify            # Full test suite
 ### Recommended (Free Tier)
 - **Frontend**: Azure Static Web Apps (Free)
 - **Backend**: Azure App Service F1 (Free)
-- **Database**: Azure SQL Free Tier / H2
+- **Database**: Supabase PostgreSQL (Free Tier)
+- **Cache**: Redis (local or Azure Cache)
 - **Auth**: Firebase (Free)
 - **Total**: ~$0-5/month
 
@@ -307,15 +306,15 @@ Backend available at `http://localhost:8080`
 ### Backend Configuration
 
 1. **Database Profiles**:
-   - `h2`: In-memory H2 database (development)
-   - `sqlserver`: Azure SQL Database (production)
+   - `supabase`: Supabase PostgreSQL (production - default)
+   - Local PostgreSQL for development
 
 2. **Application Properties**:
    ```yaml
    # application.yml
    spring:
      profiles:
-       active: h2  # or sqlserver for production
+       active: supabase  # Uses Supabase PostgreSQL
    
    # Firebase configuration (add your service account path)
    firebase:
@@ -452,7 +451,8 @@ COMPONENTS: Screens ($89-$299), Batteries ($25-$79), Cameras ($45-$129),
 ```bash
 # Frontend: Azure Static Web Apps (free)
 # Backend: Azure App Service F1 (free) 
-# Database: Azure SQL free tier or H2
+# Database: Supabase PostgreSQL (free tier)
+# Cache: Redis (local or Azure Cache)
 # Auth: Firebase (free)
 # Total Cost: ~$0-5/month
 ```
@@ -461,9 +461,10 @@ COMPONENTS: Screens ($89-$299), Batteries ($25-$79), Cameras ($45-$129),
 ```bash
 # Frontend: Azure Static Web Apps (free)
 # Backend: Azure App Service (paid tiers)
-# Database: Azure SQL Database (paid)  
-# Additional: Blob Storage, Key Vault, Monitoring
-# Total Cost: ~$20-50/month
+# Database: Supabase PostgreSQL (free tier available)
+# Cache: Redis (local or Azure Cache)
+# Additional: Firebase Auth (free), Blob Storage (optional)
+# Total Cost: ~$5-15/month
 ```
 
 ### Quick Deploy Commands

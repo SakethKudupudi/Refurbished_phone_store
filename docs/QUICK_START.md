@@ -82,7 +82,8 @@ You now have:
 - Follow `AZURE_DEPLOYMENT.md`
 - Deploy backend to Azure App Service (FREE)
 - Deploy frontend to Static Web Apps (FREE)
-- Use Azure SQL (~$5/month)
+- Use Supabase PostgreSQL (FREE)
+- Use Redis for cart/sessions
 
 **Recommended:** Develop locally first, deploy to Azure when ready for demo!
 

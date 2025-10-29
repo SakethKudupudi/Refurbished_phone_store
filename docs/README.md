@@ -9,12 +9,12 @@ Welcome to the Mobile Parts E-Commerce Platform documentation.
 
 ### Setup & Configuration
 - [Firebase Setup](./FIREBASE_SETUP.md) - Configure Firebase Authentication
-- [Azure SQL Setup](./AZURE_SQL_SETUP.md) - Connect to Azure SQL Database
-- [Azure SQL Free Tier Setup](./AZURE_SQL_FREE_SETUP_GUIDE.md) - Use free tier database
+- [Supabase Setup](./SUPABASE_SETUP.md) - Connect to Supabase PostgreSQL Database
+- [Redis Setup](./REDIS_SETUP.md) - Configure Redis for cart and sessions
+- [Database Schema](./DATABASE_SCHEMA.md) - Complete database structure
 
 ### Integration Guides
 - [Angular Backend Integration](./ANGULAR_BACKEND_INTEGRATION.md) - Connect frontend to backend
-- [Firebase + Azure Integration](./FIREBASE_AZURE_SETUP.md) - Integrate Firebase with Azure
 
 ### Deployment
 - [Azure Deployment Guide](./AZURE_DEPLOYMENT.md) - Deploy to Azure Cloud
