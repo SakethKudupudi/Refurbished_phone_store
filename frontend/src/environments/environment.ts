@@ -1,10 +1,10 @@
 export const environment = {
   production: false,
-  // Supabase REST endpoint (PostgREST) and GraphQL endpoint
-  apiUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/rest/v1',
-  graphqlUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/graphql/v1',
+  // Local backend endpoints
+  apiUrl: 'http://localhost:8080/api',
+  graphqlUrl: 'http://localhost:8080/graphql',
   graphqlEndpoint: '/graphql',
-  graphiqlUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/graphiql',
+  graphiqlUrl: 'http://localhost:8080/graphiql',
 
   // Supabase configuration - set your anon key here (or export in environment)
   supabase: {

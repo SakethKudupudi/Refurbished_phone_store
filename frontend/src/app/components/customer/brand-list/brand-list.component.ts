@@ -33,7 +33,7 @@ export class BrandListComponent implements OnInit {
     this.loading = true;
     const categoryEnum = (this.category === 'APPLE' ? 'APPLE' : 'ANDROID');
 
-    this.brandService.getBrandsByCategory(categoryEnum as 'APPLE' | 'ANDROID').subscribe({
+    this.brandService.getBrandsByCategoryRest(categoryEnum as 'APPLE' | 'ANDROID').subscribe({
       next: (data: Brand[]) => {
         this.brands = (data || []).map(b => ({
           id: b.id,

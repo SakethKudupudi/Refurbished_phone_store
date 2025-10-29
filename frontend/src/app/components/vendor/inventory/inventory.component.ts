@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ComponentService, Component as ProductComponent } from '../../../services/component.service';
+import { BrandService } from '../../../services/brand.service';
+import { ModelService } from '../../../services/model.service';
 
 interface Product {
   id: number;
@@ -12,19 +15,21 @@ interface Product {
   currentStock: number;
   minStock: number;
   price: number;
-  status: 'In Stock' | 'Low Stock' | 'Out of Stock';
+  status: 'In Stock' | 'Low Stock' | 'Out of Stock' | 'Pending Approval';
   lastUpdated: string;
+  approvalStatus?: string;
 }
 
 interface NewProduct {
   name: string;
   type: string;
-  brand: string;
-  model: string;
+  brandId: number;
+  modelId: number;
   description: string;
   quantity: number;
   price: number;
-  warranty: string;
+  warranty: number;
+  manufacturer: string;
 }
 
 @Component({
@@ -40,16 +45,18 @@ export class InventoryComponent implements OnInit {
   selectedProduct: Product | null = null;
   searchQuery: string = '';
   filterStatus: string = 'all';
+  loading: boolean = false;
   
   newProduct: NewProduct = {
     name: '',
     type: 'SCREEN',
-    brand: '',
-    model: '',
+    brandId: 0,
+    modelId: 0,
     description: '',
     quantity: 0,
     price: 0,
-    warranty: '6 months'
+    warranty: 6,
+    manufacturer: ''
   };
 
   restockQuantity: number = 0;
@@ -58,7 +65,8 @@ export class InventoryComponent implements OnInit {
   productTypes = [
     'SCREEN',
     'BATTERY',
-    'CAMERA',
+    'CAMERA_REAR',
+    'CAMERA_FRONT',
     'CHARGING_PORT',
     'SPEAKER',
     'MICROPHONE',
@@ -68,98 +76,111 @@ export class InventoryComponent implements OnInit {
     'FLEX_CABLE'
   ];
 
-  brands = [
-    'Apple',
-    'Samsung',
-    'Google',
-    'OnePlus',
-    'Xiaomi',
-    'Oppo',
-    'Vivo',
-    'Realme',
-    'Motorola',
-    'Nokia'
-  ];
+  brands: any[] = [];
+  models: any[] = [];
+  filteredModels: any[] = [];
 
-  products: Product[] = [
-    {
-      id: 1,
-      name: 'iPhone 15 Pro Max OLED Display',
-      type: 'SCREEN',
-      brand: 'Apple',
-      model: 'iPhone 15 Pro Max',
-      currentStock: 8,
-      minStock: 20,
-      price: 299.99,
-      status: 'Low Stock',
-      lastUpdated: '2 hours ago'
-    },
-    {
-      id: 2,
-      name: 'Galaxy S24 Ultra Battery 5000mAh',
-      type: 'BATTERY',
-      brand: 'Samsung',
-      model: 'Galaxy S24 Ultra',
-      currentStock: 5,
-      minStock: 15,
-      price: 49.99,
-      status: 'Low Stock',
-      lastUpdated: '5 hours ago'
-    },
-    {
-      id: 3,
-      name: 'Pixel 8 Pro Rear Camera Module',
-      type: 'CAMERA',
-      brand: 'Google',
-      model: 'Pixel 8 Pro',
-      currentStock: 12,
-      minStock: 25,
-      price: 189.99,
-      status: 'Low Stock',
-      lastUpdated: '1 day ago'
-    },
-    {
-      id: 4,
-      name: 'OnePlus 12 USB-C Charging Port',
-      type: 'CHARGING_PORT',
-      brand: 'OnePlus',
-      model: 'OnePlus 12',
-      currentStock: 35,
-      minStock: 30,
-      price: 29.99,
-      status: 'In Stock',
-      lastUpdated: '2 days ago'
-    },
-    {
-      id: 5,
-      name: 'Xiaomi 14 Pro LCD Display',
-      type: 'SCREEN',
-      brand: 'Xiaomi',
-      model: 'Xiaomi 14 Pro',
-      currentStock: 0,
-      minStock: 20,
-      price: 119.99,
-      status: 'Out of Stock',
-      lastUpdated: '3 days ago'
-    },
-    {
-      id: 6,
-      name: 'iPhone 14 Pro Battery',
-      type: 'BATTERY',
-      brand: 'Apple',
-      model: 'iPhone 14 Pro',
-      currentStock: 42,
-      minStock: 25,
-      price: 79.99,
-      status: 'In Stock',
-      lastUpdated: '1 day ago'
-    }
-  ];
+  products: Product[] = [];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private componentService: ComponentService,
+    private brandService: BrandService,
+    private modelService: ModelService
+  ) {}
 
   ngOnInit() {
-    this.updateProductStatuses();
+    this.loadBrands();
+    this.loadVendorComponents();
+  }
+
+  loadBrands() {
+    this.brandService.getAllBrandsRest().subscribe({
+      next: (brands) => {
+        this.brands = brands;
+      },
+      error: (error) => {
+        console.error('Error loading brands:', error);
+      }
+    });
+  }
+
+  loadVendorComponents() {
+    this.loading = true;
+    // TODO: Get actual vendor ID from auth service
+    const vendorId = 5; // Using the test vendor ID we created
+    
+    this.componentService.getComponentsByVendorRest(vendorId).subscribe({
+      next: (components) => {
+        this.products = components.map(c => this.mapComponentToProduct(c));
+        this.updateProductStatuses();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading components:', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  mapComponentToProduct(component: ProductComponent): Product {
+    return {
+      id: component.id!,
+      name: component.name,
+      type: component.componentType,
+      brand: component.model?.brand?.name || 'Unknown',
+      model: component.model?.name || 'Unknown',
+      currentStock: component.quantityAvailable,
+      minStock: 20,
+      price: component.price,
+      status: this.getProductStatus(component),
+      lastUpdated: this.getRelativeTime(component.updatedAt || component.createdAt || ''),
+      approvalStatus: component.approvalStatus
+    };
+  }
+
+  getProductStatus(component: ProductComponent): 'In Stock' | 'Low Stock' | 'Out of Stock' | 'Pending Approval' {
+    if (component.approvalStatus === 'PENDING') {
+      return 'Pending Approval';
+    }
+    if (component.quantityAvailable === 0) {
+      return 'Out of Stock';
+    }
+    if (component.quantityAvailable < 20) {
+      return 'Low Stock';
+    }
+    return 'In Stock';
+  }
+
+  getRelativeTime(dateString: string): string {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+  }
+
+  onBrandChange() {
+    if (this.newProduct.brandId) {
+      this.modelService.getModelsByBrandRest(this.newProduct.brandId).subscribe({
+        next: (models) => {
+          this.filteredModels = models;
+          this.newProduct.modelId = 0;
+        },
+        error: (error) => {
+          console.error('Error loading models:', error);
+        }
+      });
+    } else {
+      this.filteredModels = [];
+      this.newProduct.modelId = 0;
+    }
   }
 
   updateProductStatuses() {
@@ -211,42 +232,60 @@ export class InventoryComponent implements OnInit {
     this.newProduct = {
       name: '',
       type: 'SCREEN',
-      brand: '',
-      model: '',
+      brandId: 0,
+      modelId: 0,
       description: '',
       quantity: 0,
       price: 0,
-      warranty: '6 months'
+      warranty: 6,
+      manufacturer: ''
     };
+    this.filteredModels = [];
   }
 
   addProduct() {
     if (this.validateNewProduct()) {
-      const newProduct: Product = {
-        id: this.products.length + 1,
+      this.loading = true;
+
+      const componentData: Partial<ProductComponent> = {
         name: this.newProduct.name,
-        type: this.newProduct.type,
-        brand: this.newProduct.brand,
-        model: this.newProduct.model,
-        currentStock: this.newProduct.quantity,
-        minStock: 20,
+        componentType: this.newProduct.type,
+        description: this.newProduct.description,
         price: this.newProduct.price,
-        status: 'In Stock',
-        lastUpdated: 'Just now'
+        quantityAvailable: this.newProduct.quantity,
+        warrantyMonths: this.newProduct.warranty,
+        manufacturer: this.newProduct.manufacturer,
+        model: {
+          id: this.newProduct.modelId,
+          name: '', // Will be fetched by backend
+          brand: {
+            id: 0,
+            name: ''
+          }
+        },
+        condition: 'NEW',
+        isActive: true
       };
 
-      this.products.unshift(newProduct);
-      this.updateProductStatuses();
-      this.closeAddProductModal();
-      
-      // TODO: Send to backend for admin approval
-      alert('Product added successfully! Pending admin approval.');
+      this.componentService.createComponentRest(componentData).subscribe({
+        next: (createdComponent) => {
+          alert('Product added successfully! Pending admin approval.');
+          this.loadVendorComponents(); // Reload the list
+          this.closeAddProductModal();
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error creating component:', error);
+          alert('Failed to add product. Please try again.');
+          this.loading = false;
+        }
+      });
     }
   }
 
   validateNewProduct(): boolean {
-    if (!this.newProduct.name || !this.newProduct.brand || !this.newProduct.model) {
-      alert('Please fill in all required fields');
+    if (!this.newProduct.name || !this.newProduct.brandId || !this.newProduct.modelId) {
+      alert('Please fill in all required fields (name, brand, model)');
       return false;
     }
     if (this.newProduct.quantity < 0 || this.newProduct.price <= 0) {

@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { GraphqlService } from './graphql.service';
+import { environment } from '../../environments/environment';
 
 export interface Component {
-  id: number;
+  id?: number;
   name: string;
   price: number;
   description: string;
@@ -14,29 +16,109 @@ export interface Component {
   warrantyMonths?: number;
   condition?: string;
   isActive?: boolean;
-  model: {
+  model?: {
     id: number;
     name: string;
-    brand: {
+    brand?: {
       id: number;
       name: string;
     };
   };
-  vendor: {
+  vendor?: {
     id: number;
     firstName: string;
     lastName: string;
     email: string;
   };
-  approvalStatus: string;
+  approvalStatus?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComponentService {
+  private apiUrl = `${environment.apiUrl}/components`;
 
-  constructor(private graphqlService: GraphqlService) { }
+  constructor(
+    private http: HttpClient,
+    private graphqlService: GraphqlService
+  ) { }
+
+  // ===== REST API Methods =====
+  
+  /**
+   * Get all components via REST API
+   */
+  getAllComponentsRest(): Observable<Component[]> {
+    return this.http.get<Component[]>(this.apiUrl);
+  }
+
+  /**
+   * Get component by ID via REST API
+   */
+  getComponentByIdRest(id: number): Observable<Component> {
+    return this.http.get<Component>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Get components by model via REST API
+   */
+  getComponentsByModelRest(modelId: number): Observable<Component[]> {
+    return this.http.get<Component[]>(`${this.apiUrl}/model/${modelId}`);
+  }
+
+  /**
+   * Get components by vendor via REST API
+   */
+  getComponentsByVendorRest(vendorId: number): Observable<Component[]> {
+    return this.http.get<Component[]>(`${this.apiUrl}/vendor/${vendorId}`);
+  }
+
+  /**
+   * Get pending approvals via REST API (Admin only)
+   */
+  getPendingApprovalsRest(): Observable<Component[]> {
+    return this.http.get<Component[]>(`${this.apiUrl}/pending`);
+  }
+
+  /**
+   * Create component via REST API
+   */
+  createComponentRest(component: Partial<Component>): Observable<Component> {
+    return this.http.post<Component>(this.apiUrl, component);
+  }
+
+  /**
+   * Update component via REST API
+   */
+  updateComponentRest(id: number, component: Partial<Component>): Observable<Component> {
+    return this.http.put<Component>(`${this.apiUrl}/${id}`, component);
+  }
+
+  /**
+   * Delete component via REST API
+   */
+  deleteComponentRest(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Approve component via REST API (Admin only)
+   */
+  approveComponentRest(id: number): Observable<Component> {
+    return this.http.post<Component>(`${this.apiUrl}/${id}/approve`, {});
+  }
+
+  /**
+   * Reject component via REST API (Admin only)
+   */
+  rejectComponentRest(id: number, reason: string): Observable<Component> {
+    return this.http.post<Component>(`${this.apiUrl}/${id}/reject`, { reason });
+  }
+
+  // ===== GraphQL Methods =====
 
   /**
    * Get all components

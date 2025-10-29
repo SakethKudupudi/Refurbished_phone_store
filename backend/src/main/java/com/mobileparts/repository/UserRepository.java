@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-    Optional<User> findByAzureAdObjectId(String azureAdObjectId);
+    Optional<User> findByFirebaseUid(String firebaseUid);
 
     boolean existsByEmail(String email);
 

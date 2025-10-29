@@ -44,6 +44,7 @@ export class ComponentListComponent implements OnInit {
   components: ComponentPart[] = [];
   filteredComponents: ComponentPart[] = [];
   modelId: number = 0;
+  brandId: number = 0;
   modelName: string = '';
   selectedType: string = 'ALL';
   selectedCategory: string = '';
@@ -70,9 +71,10 @@ export class ComponentListComponent implements OnInit {
   }
 
   loadModelName() {
-    this.modelService.getModelById(this.modelId).subscribe({
+    this.modelService.getModelByIdRest(this.modelId).subscribe({
       next: (model: any) => {
-        this.modelName = `${model.brand.name} ${model.name}`;
+        this.modelName = `${model.brand?.name || 'Phone'} ${model.name}`;
+        this.brandId = model.brand?.id || 0;
       },
       error: (err: any) => {
         console.error('Error loading model:', err);
@@ -83,7 +85,7 @@ export class ComponentListComponent implements OnInit {
 
   loadComponents() {
     this.loading = true;
-    this.componentService.getComponentsByModel(this.modelId).subscribe({
+    this.componentService.getComponentsByModelRest(this.modelId).subscribe({
       next: (data: ComponentData[]) => {
         this.components = (data || []).map(c => this.mapToComponentPart(c));
         this.filteredComponents = this.components;
@@ -220,7 +222,12 @@ export class ComponentListComponent implements OnInit {
   }
 
   goBack() {
-    const brandId = this.getBrandIdFromModel(this.modelId);
-    this.router.navigate(['/models', brandId]);
+    // Navigate back to the models page for the current brand
+    if (this.brandId > 0) {
+      this.router.navigate(['/models', this.brandId]);
+    } else {
+      // Fallback to shop if brandId not available
+      this.router.navigate(['/shop']);
+    }
   }
 }

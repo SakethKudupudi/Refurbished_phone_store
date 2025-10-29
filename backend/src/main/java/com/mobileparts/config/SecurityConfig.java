@@ -21,8 +21,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**", "/graphql", "/h2-console/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()  // Bypass all authentication for development
             )
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); // For H2 Console
         

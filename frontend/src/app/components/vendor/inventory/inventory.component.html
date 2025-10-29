@@ -194,18 +194,26 @@
 
           <div class="form-group">
             <label>Brand *</label>
-            <select [(ngModel)]="newProduct.brand">
-              <option value="">Select Brand</option>
-              <option *ngFor="let brand of brands" [value]="brand">{{ brand }}</option>
+            <select [(ngModel)]="newProduct.brandId" (change)="onBrandChange()">
+              <option [value]="0">Select Brand</option>
+              <option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Model *</label>
+            <select [(ngModel)]="newProduct.modelId" [disabled]="!newProduct.brandId || filteredModels.length === 0">
+              <option [value]="0">Select Model</option>
+              <option *ngFor="let model of filteredModels" [value]="model.id">{{ model.name }}</option>
             </select>
           </div>
 
           <div class="form-group full-width">
-            <label>Model *</label>
+            <label>Manufacturer</label>
             <input 
               type="text" 
-              placeholder="e.g., iPhone 15 Pro Max"
-              [(ngModel)]="newProduct.model"
+              placeholder="e.g., Foxconn, Samsung Display"
+              [(ngModel)]="newProduct.manufacturer"
             />
           </div>
 
@@ -240,13 +248,13 @@
           </div>
 
           <div class="form-group full-width">
-            <label>Warranty Period</label>
+            <label>Warranty Period (Months)</label>
             <select [(ngModel)]="newProduct.warranty">
-              <option value="No warranty">No warranty</option>
-              <option value="3 months">3 months</option>
-              <option value="6 months">6 months</option>
-              <option value="12 months">12 months</option>
-              <option value="24 months">24 months</option>
+              <option [value]="0">No warranty</option>
+              <option [value]="3">3 months</option>
+              <option [value]="6">6 months</option>
+              <option [value]="12">12 months</option>
+              <option [value]="24">24 months</option>
             </select>
           </div>
         </div>

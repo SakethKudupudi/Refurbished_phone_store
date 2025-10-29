@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { GraphqlService } from './graphql.service';
+import { environment } from '../../environments/environment';
 
 export interface Brand {
   id: number;
@@ -9,14 +11,46 @@ export interface Brand {
   category: 'APPLE' | 'ANDROID';
   logoUrl?: string;
   isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  isDeleted?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class BrandService {
+  private apiUrl = `${environment.apiUrl}/brands`;
 
-  constructor(private graphqlService: GraphqlService) { }
+  constructor(
+    private http: HttpClient,
+    private graphqlService: GraphqlService
+  ) { }
+
+  // ===== REST API Methods =====
+
+  /**
+   * Get all brands via REST API
+   */
+  getAllBrandsRest(): Observable<Brand[]> {
+    return this.http.get<Brand[]>(this.apiUrl);
+  }
+
+  /**
+   * Get brand by ID via REST API
+   */
+  getBrandByIdRest(id: number): Observable<Brand> {
+    return this.http.get<Brand>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Get brands by category via REST API
+   */
+  getBrandsByCategoryRest(category: 'APPLE' | 'ANDROID'): Observable<Brand[]> {
+    return this.http.get<Brand[]>(`${this.apiUrl}/category/${category}`);
+  }
+
+  // ===== GraphQL Methods =====
 
   /**
    * Get all brands

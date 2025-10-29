@@ -1,7 +1,9 @@
 package com.mobileparts.service;
 
 import com.mobileparts.entity.Component;
+import com.mobileparts.entity.User;
 import com.mobileparts.repository.ComponentRepository;
+import com.mobileparts.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +20,33 @@ public class ComponentService {
     @Autowired
     private ComponentRepository componentRepository;
 
+    @Autowired
+    private ModelService modelService;
+
+    @Autowired
+    private UserRepository userRepository;
+
     public Component createComponent(Component component) {
         // New components start in PENDING status
         component.setApprovalStatus(Component.ApprovalStatus.PENDING);
+        
+        // Resolve the model if only ID is provided
+        if (component.getModel() != null && component.getModel().getId() != null) {
+            Long modelId = component.getModel().getId();
+            com.mobileparts.entity.Model fullModel = modelService.getModelById(modelId)
+                .orElseThrow(() -> new RuntimeException("Model not found with id: " + modelId));
+            component.setModel(fullModel);
+        }
+        
+        // Get current user as vendor if not set
+        // TODO: Get from security context when authentication is implemented
+        if (component.getVendor() == null || component.getVendor().getId() == null) {
+            // For now, use the test vendor ID 5
+            User vendor = userRepository.findById(5L)
+                .orElseThrow(() -> new RuntimeException("Vendor user not found"));
+            component.setVendor(vendor);
+        }
+        
         return componentRepository.save(component);
     }
 

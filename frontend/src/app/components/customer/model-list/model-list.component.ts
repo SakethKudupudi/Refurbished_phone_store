@@ -47,7 +47,7 @@ export class ModelListComponent implements OnInit {
   }
 
   loadBrandName() {
-    this.brandService.getBrandById(this.brandId).subscribe({
+    this.brandService.getBrandByIdRest(this.brandId).subscribe({
       next: (brand) => {
         this.brandName = brand.name;
       },
@@ -60,7 +60,7 @@ export class ModelListComponent implements OnInit {
 
   loadModels() {
     this.loading = true;
-    this.modelService.getModelsByBrand(this.brandId).subscribe({
+    this.modelService.getModelsByBrandRest(this.brandId).subscribe({
       next: (data: ModelData[]) => {
         this.models = data.map(m => this.mapToModel(m));
         this.sortModels();
@@ -91,7 +91,7 @@ export class ModelListComponent implements OnInit {
     return {
       id: model.id,
       name: model.name,
-      brandId: model.brand.id,
+      brandId: model.brand?.id || 0,
       year: model.releaseYear?.toString() || 'Unknown',
       storage: '128GB', // Default since not in backend model
       color: 'Standard', // Default since not in backend model
@@ -140,13 +140,22 @@ export class ModelListComponent implements OnInit {
   }
 
   goBack() {
-    // For Apple (brandId 1), go back to shop since brands/APPLE auto-redirects to models
-    if (this.brandId === 1) {
-      this.router.navigate(['/shop']);
-    } else {
-      // For Android brands, go back to brands/ANDROID to see brand selection
-      this.router.navigate(['/brands', 'ANDROID']);
-    }
+    // Load brand to determine category, then navigate to appropriate page
+    this.brandService.getBrandByIdRest(this.brandId).subscribe({
+      next: (brand) => {
+        if (brand.category === 'APPLE') {
+          // For Apple, go back to shop since brands/APPLE auto-redirects to models
+          this.router.navigate(['/shop']);
+        } else {
+          // For Android brands, go back to brands/ANDROID to see brand selection
+          this.router.navigate(['/brands', 'ANDROID']);
+        }
+      },
+      error: () => {
+        // Default fallback
+        this.router.navigate(['/shop']);
+      }
+    });
   }
 
   selectModel(modelId: number) {

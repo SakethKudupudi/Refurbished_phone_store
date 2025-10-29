@@ -1,1 +1,79 @@
-<p>approvals works!</p>
+<div class="approvals-container">
+  <div class="header">
+    <h1>Pending Approvals</h1>
+    <p class="subtitle">Review and approve vendor product submissions</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading pending approvals...
+  </div>
+
+  <div *ngIf="!loading && pendingComponents.length === 0" class="no-data">
+    <h3>No Pending Approvals</h3>
+    <p>All vendor submissions have been processed.</p>
+  </div>
+
+  <div *ngIf="!loading && pendingComponents.length > 0" class="approvals-grid">
+    <div *ngFor="let component of pendingComponents" class="approval-card">
+      <div class="card-header">
+        <h3>{{ component.name }}</h3>
+        <span class="status-badge pending">{{ component.approvalStatus }}</span>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="label">Type:</span>
+          <span class="value">{{ component.componentType }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Model:</span>
+          <span class="value">{{ component.model?.name || 'N/A' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Brand:</span>
+          <span class="value">{{ component.model?.brand?.name || 'N/A' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Price:</span>
+          <span class="value">\${{ component.price }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Stock:</span>
+          <span class="value">{{ component.quantityAvailable }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Vendor:</span>
+          <span class="value">{{ component.vendor?.firstName }} {{ component.vendor?.lastName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Email:</span>
+          <span class="value">{{ component.vendor?.email }}</span>
+        </div>
+        <div class="info-row full-width" *ngIf="component.description">
+          <span class="label">Description:</span>
+          <span class="value">{{ component.description }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Warranty:</span>
+          <span class="value">{{ component.warrantyMonths || 0 }} months</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Manufacturer:</span>
+          <span class="value">{{ component.manufacturer || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn btn-approve" (click)="approveComponent(component)">
+          ✓ Approve
+        </button>
+        <button class="btn btn-reject" (click)="rejectComponent(component)">
+          ✗ Reject
+        </button>
+        <button class="btn btn-delete" (click)="deleteComponent(component)">
+          🗑 Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

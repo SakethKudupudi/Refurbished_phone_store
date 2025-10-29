@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { GraphqlService } from './graphql.service';
+import { environment } from '../../environments/environment';
 
 export interface Model {
   id: number;
@@ -10,7 +12,10 @@ export interface Model {
   releaseYear?: number;
   imageUrl?: string;
   isActive?: boolean;
-  brand: {
+  createdAt?: string;
+  updatedAt?: string;
+  isDeleted?: boolean;
+  brand?: {
     id: number;
     name: string;
     category: string;
@@ -21,8 +26,37 @@ export interface Model {
   providedIn: 'root'
 })
 export class ModelService {
+  private apiUrl = `${environment.apiUrl}/models`;
 
-  constructor(private graphqlService: GraphqlService) { }
+  constructor(
+    private http: HttpClient,
+    private graphqlService: GraphqlService
+  ) { }
+
+  // ===== REST API Methods =====
+
+  /**
+   * Get all models via REST API
+   */
+  getAllModelsRest(): Observable<Model[]> {
+    return this.http.get<Model[]>(this.apiUrl);
+  }
+
+  /**
+   * Get model by ID via REST API
+   */
+  getModelByIdRest(id: number): Observable<Model> {
+    return this.http.get<Model>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Get models by brand via REST API
+   */
+  getModelsByBrandRest(brandId: number): Observable<Model[]> {
+    return this.http.get<Model[]>(`${this.apiUrl}/brand/${brandId}`);
+  }
+
+  // ===== GraphQL Methods =====
 
   /**
    * Get all models

@@ -1,11 +1,10 @@
 package com.mobileparts.controller;
 
-import com.mobileparts.service.CartService;
-import com.mobileparts.service.CartService.CartItemDTO;
+import com.mobileparts.model.RedisCartItem;
+import com.mobileparts.service.RedisCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -14,22 +13,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/cart")
 @CrossOrigin(origins = "http://localhost:4200")
-@PreAuthorize("isAuthenticated()")
 public class CartController {
 
     @Autowired
-    private CartService cartService;
+    private RedisCartService cartService;
 
     @GetMapping
-    public ResponseEntity<List<CartItemDTO>> getCartItems(@RequestParam Long userId) {
+    public ResponseEntity<List<RedisCartItem>> getCartItems(@RequestParam Long userId) {
         return ResponseEntity.ok(cartService.getCartItems(userId));
     }
 
     @GetMapping("/summary")
     public ResponseEntity<CartSummary> getCartSummary(@RequestParam Long userId) {
-        List<CartItemDTO> items = cartService.getCartItems(userId);
+        List<RedisCartItem> items = cartService.getCartItems(userId);
         BigDecimal totalAmount = cartService.getCartTotal(userId);
-        Integer totalItems = cartService.getCartItemCount(userId);
+        long totalItems = cartService.getCartItemCount(userId);
         
         CartSummary summary = new CartSummary(items, totalItems, totalAmount);
         return ResponseEntity.ok(summary);
@@ -37,7 +35,7 @@ public class CartController {
 
     @GetMapping("/count")
     public ResponseEntity<CountResponse> getCartCount(@RequestParam Long userId) {
-        Integer count = cartService.getCartItemCount(userId);
+        long count = cartService.getCartItemCount(userId);
         return ResponseEntity.ok(new CountResponse(count));
     }
 
@@ -48,8 +46,8 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<CartItemDTO> addToCart(@RequestBody AddToCartRequest request) {
-        CartItemDTO cartItem = cartService.addToCart(
+    public ResponseEntity<RedisCartItem> addToCart(@RequestBody AddToCartRequest request) {
+        RedisCartItem cartItem = cartService.addToCart(
             request.getUserId(),
             request.getComponentId(),
             request.getQuantity()
@@ -58,11 +56,14 @@ public class CartController {
     }
 
     @PutMapping("/{componentId}")
-    public ResponseEntity<CartItemDTO> updateCartItemQuantity(
+    public ResponseEntity<RedisCartItem> updateCartItemQuantity(
             @PathVariable Long componentId,
             @RequestParam Long userId,
             @RequestBody UpdateQuantityRequest request) {
-        CartItemDTO updated = cartService.updateCartItemQuantity(userId, componentId, request.getQuantity());
+        RedisCartItem updated = cartService.updateQuantity(userId, componentId, request.getQuantity());
+        if (updated == null) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(updated);
     }
 
