@@ -11,11 +11,12 @@ import java.util.Set;
 
 /**
  * User entity representing customers, vendors, and admins
+ * Uses Firebase authentication
  */
 @Entity
 @Table(name = "users", indexes = {
     @Index(name = "idx_user_email", columnList = "email"),
-    @Index(name = "idx_user_azure_id", columnList = "azure_ad_object_id")
+    @Index(name = "idx_user_firebase_uid", columnList = "firebase_uid")
 })
 @Getter
 @Setter
@@ -24,8 +25,8 @@ import java.util.Set;
 @Builder
 public class User extends BaseEntity {
 
-    @Column(name = "azure_ad_object_id", unique = true)
-    private String azureAdObjectId;
+    @Column(name = "firebase_uid", unique = true, nullable = false, length = 128)
+    private String firebaseUid;
 
     @NotBlank
     @Email

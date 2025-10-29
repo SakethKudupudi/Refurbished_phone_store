@@ -16,8 +16,8 @@ Main user table for customers, vendors, and admins (role-based)
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | `id` | BIGINT | PK, AUTO_INCREMENT | User ID |
-| `azure_ad_object_id` | VARCHAR(255) | UNIQUE | Azure AD object ID |
-| `email` | VARCHAR(255) | NOT NULL, UNIQUE | Email address |
+| `firebase_uid` | VARCHAR(128) | NOT NULL, UNIQUE | Firebase Auth UID |
+| `email` | VARCHAR(255) | NOT NULL, UNIQUE | Email address (Firebase auth) |
 | `first_name` | VARCHAR(100) | NOT NULL | First name |
 | `last_name` | VARCHAR(100) | NOT NULL | Last name |
 | `phone_number` | VARCHAR(20) | | Phone number |
@@ -34,7 +34,7 @@ Main user table for customers, vendors, and admins (role-based)
 
 **Indexes:**
 - `idx_user_email` on `email`
-- `idx_user_azure_id` on `azure_ad_object_id`
+- `idx_user_firebase_uid` on `firebase_uid`
 
 ---
 
