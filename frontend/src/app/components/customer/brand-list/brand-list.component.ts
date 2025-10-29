@@ -13,46 +13,8 @@ import { BrandService, Brand } from '../../../services/brand.service';
 })
 export class BrandListComponent implements OnInit {
   category: string = '';
-  brands: any[] = [];
+  brands: Array<{ id: number; name: string; category: string; description: string; logo: string }> = [];
   loading: boolean = true;
-
-  mockBrands = [
-    { 
-      id: 1, 
-      name: 'Samsung', 
-      category: 'ANDROID', 
-      description: 'Galaxy series & more',
-      logo: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&q=80'
-    },
-    { 
-      id: 2, 
-      name: 'Google', 
-      category: 'ANDROID', 
-      description: 'Pixel smartphones',
-      logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&q=80'
-    },
-    { 
-      id: 3, 
-      name: 'OnePlus', 
-      category: 'ANDROID', 
-      description: 'Flagship killers',
-      logo: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80'
-    },
-    { 
-      id: 4, 
-      name: 'Xiaomi', 
-      category: 'ANDROID', 
-      description: 'Mi & Redmi series',
-      logo: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=800&q=80'
-    },
-    { 
-      id: 5, 
-      name: 'Apple', 
-      category: 'APPLE', 
-      description: 'iPhone parts',
-      logo: '/application_images/apple_main.jpg'
-    }
-  ];
 
   constructor(
     private router: Router,
@@ -62,64 +24,57 @@ export class BrandListComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.category = params['category'];
-      
-      // Set brands immediately from mock data
-      if (this.category === 'APPLE') {
-        this.brands = this.mockBrands.filter(b => b.category === 'APPLE');
-        this.loading = false;
-        if (this.brands.length > 0) {
-          // Auto-navigate to Apple models page (brand ID 5)
-          this.selectBrand(5);
-        }
-      } else {
-        // ANDROID category - show brands immediately
-        this.brands = this.mockBrands.filter(b => b.category === 'ANDROID');
-        this.loading = false;
-        // Try to load from API in background
-        this.loadBrands();
-      }
+      this.category = params['category'] || 'ANDROID';
+      this.loadBrands();
     });
   }
 
   loadBrands() {
-    this.brandService.getAllBrands().subscribe({
-      next: (data: Brand[]) => {
-        if (data && data.length > 0) {
-          // Map brands to include category and images
-          const mappedBrands = data.map(brand => {
-            const mockBrand = this.mockBrands.find(mb => mb.name.toLowerCase() === brand.name.toLowerCase());
-            return {
-              id: brand.id,
-              name: brand.name,
-              category: brand.name === 'Apple' ? 'APPLE' : 'ANDROID',
-              description: mockBrand?.description || `${brand.name} smartphones`,
-              logo: mockBrand?.logo || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80'
-            };
-          });
+    this.loading = true;
+    const categoryEnum = (this.category === 'APPLE' ? 'APPLE' : 'ANDROID');
 
-          const androidBrands = mappedBrands.filter(b => b.category === 'ANDROID');
-          if (androidBrands.length > 0) {
-            this.brands = androidBrands;
-          }
+    this.brandService.getBrandsByCategory(categoryEnum as 'APPLE' | 'ANDROID').subscribe({
+      next: (data: Brand[]) => {
+        this.brands = (data || []).map(b => ({
+          id: b.id,
+          name: b.name,
+          category: b.category as string,
+          description: b.description || `${b.name} products`,
+          logo: b.logoUrl || this.getDefaultLogo(b.name)
+        }));
+
+        this.loading = false;
+
+        // If APPLE and only one brand returned, auto-navigate to its models page
+        if (categoryEnum === 'APPLE' && this.brands.length === 1) {
+          this.selectBrand(this.brands[0].id);
         }
       },
       error: (err: any) => {
-        // Keep mock data on error
+        console.error('Error loading brands:', err);
+        this.loading = false;
+        this.brands = [];
       }
     });
   }
 
-  goBack() {
-    this.router.navigate(['/shop']);
+  getDefaultLogo(brandName: string): string {
+    const logoMap: { [key: string]: string } = {
+      'Apple': '/application_images/apple_main.jpg',
+      'Samsung': 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&q=80',
+      'Google': 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&q=80',
+      'OnePlus': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80',
+      'Xiaomi': 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=800&q=80'
+    };
+
+    return logoMap[brandName] || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80';
   }
 
   selectBrand(brandId: number) {
     this.router.navigate(['/models', brandId]);
   }
 
-  getBrandImage(brandName: string): string {
-    const brand = this.mockBrands.find(b => b.name === brandName);
-    return brand?.logo || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80';
+  goBack() {
+    this.router.navigate(['/shop']);
   }
 }

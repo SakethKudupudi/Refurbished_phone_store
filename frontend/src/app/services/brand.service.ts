@@ -1,64 +1,106 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { GraphqlService } from './graphql.service';
 
 export interface Brand {
   id: number;
   name: string;
   description?: string;
-  category: 'PHONE' | 'TABLET' | 'LAPTOP' | 'ACCESSORY';
+  category: 'APPLE' | 'ANDROID';
   logoUrl?: string;
-  website?: string;
+  isActive?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class BrandService {
-  private apiUrl = `${environment.apiUrl}/api/brands`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private graphqlService: GraphqlService) { }
 
   /**
    * Get all brands
    */
   getAllBrands(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(this.apiUrl);
+    return this.graphqlService.getAllBrands();
   }
 
   /**
    * Get brand by ID
    */
   getBrandById(id: number): Observable<Brand> {
-    return this.http.get<Brand>(`${this.apiUrl}/${id}`);
+    return this.graphqlService.getBrandById(id);
   }
 
   /**
    * Get brands by category
    */
-  getBrandsByCategory(category: Brand['category']): Observable<Brand[]> {
-    return this.http.get<Brand[]>(`${this.apiUrl}/category/${category}`);
+  getBrandsByCategory(category: 'APPLE' | 'ANDROID'): Observable<Brand[]> {
+    return this.graphqlService.getBrandsByCategory(category);
   }
 
   /**
    * Create new brand (admin only)
    */
   createBrand(brand: Partial<Brand>): Observable<Brand> {
-    return this.http.post<Brand>(this.apiUrl, brand);
+    const mutation = `
+      mutation CreateBrand($input: CreateBrandInput!) {
+        createBrand(input: $input) {
+          id
+          name
+          description
+          category
+          logoUrl
+          isActive
+        }
+      }
+    `;
+    return this.graphqlService.mutate(mutation, {
+      input: {
+        name: brand.name,
+        description: brand.description,
+        category: brand.category,
+        logoUrl: brand.logoUrl
+      }
+    });
   }
 
   /**
    * Update brand (admin only)
    */
   updateBrand(id: number, brand: Partial<Brand>): Observable<Brand> {
-    return this.http.put<Brand>(`${this.apiUrl}/${id}`, brand);
+    const mutation = `
+      mutation UpdateBrand($id: ID!, $input: CreateBrandInput!) {
+        updateBrand(id: $id, input: $input) {
+          id
+          name
+          description
+          category
+          logoUrl
+          isActive
+        }
+      }
+    `;
+    return this.graphqlService.mutate(mutation, {
+      id: id.toString(),
+      input: {
+        name: brand.name,
+        description: brand.description,
+        category: brand.category,
+        logoUrl: brand.logoUrl
+      }
+    });
   }
 
   /**
    * Delete brand (admin only)
    */
   deleteBrand(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    const mutation = `
+      mutation DeleteBrand($id: ID!) {
+        deleteBrand(id: $id)
+      }
+    `;
+    return this.graphqlService.mutate(mutation, { id: id.toString() });
   }
 }

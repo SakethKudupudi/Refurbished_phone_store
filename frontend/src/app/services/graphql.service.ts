@@ -44,9 +44,20 @@ export class GraphqlService {
    * Execute GraphQL request
    */
   private execute<T>(request: GraphQLRequest): Observable<T> {
-    const headers = new HttpHeaders({
+
+
+    const headersConfig: { [k: string]: string } = {
       'Content-Type': 'application/json',
-    });
+    };
+
+    // If Supabase anon key is configured, include it in headers (both apikey and Authorization)
+    if ((environment as any).supabase && (environment as any).supabase.anonKey) {
+      const anon = (environment as any).supabase.anonKey;
+      headersConfig['apikey'] = anon;
+      headersConfig['Authorization'] = `Bearer ${anon}`;
+    }
+
+    const headers = new HttpHeaders(headersConfig);
 
     return this.http.post<GraphQLResponse<T>>(
       this.graphqlUrl,
@@ -179,6 +190,217 @@ export class GraphqlService {
       }
     `;
     return this.query(query, { userId });
+  }
+
+  /**
+   * Get all brands
+   */
+  getAllBrands(): Observable<any> {
+    const query = `
+      query GetAllBrands {
+        brands {
+          id
+          name
+          description
+          logoUrl
+          category
+          isActive
+        }
+      }
+    `;
+    return this.query(query).pipe(
+      map((response: any) => response.brands || [])
+    );
+  }
+
+  /**
+   * Get brands by category
+   */
+  getBrandsByCategory(category: string): Observable<any> {
+    const query = `
+      query GetBrandsByCategory($category: BrandCategory!) {
+        brandsByCategory(category: $category) {
+          id
+          name
+          description
+          logoUrl
+          category
+          isActive
+        }
+      }
+    `;
+    return this.query(query, { category }).pipe(
+      map((response: any) => response.brandsByCategory || [])
+    );
+  }
+
+  /**
+   * Get brand by ID
+   */
+  getBrandById(id: number): Observable<any> {
+    const query = `
+      query GetBrandById($id: ID!) {
+        brand(id: $id) {
+          id
+          name
+          description
+          logoUrl
+          category
+          isActive
+        }
+      }
+    `;
+    return this.query(query, { id: id.toString() }).pipe(
+      map((response: any) => response.brand)
+    );
+  }
+
+  /**
+   * Get all models
+   */
+  getAllModels(): Observable<any> {
+    const query = `
+      query GetAllModels {
+        models {
+          id
+          name
+          description
+          imageUrl
+          releaseYear
+          modelNumber
+          isActive
+          brand {
+            id
+            name
+            category
+          }
+        }
+      }
+    `;
+    return this.query(query).pipe(
+      map((response: any) => response.models || [])
+    );
+  }
+
+  /**
+   * Get models by brand
+   */
+  getModelsByBrand(brandId: number): Observable<any> {
+    const query = `
+      query GetModelsByBrand($brandId: ID!) {
+        modelsByBrand(brandId: $brandId) {
+          id
+          name
+          description
+          imageUrl
+          releaseYear
+          modelNumber
+          isActive
+          brand {
+            id
+            name
+            category
+          }
+        }
+      }
+    `;
+    return this.query(query, { brandId: brandId.toString() }).pipe(
+      map((response: any) => response.modelsByBrand || [])
+    );
+  }
+
+  /**
+   * Get model by ID
+   */
+  getModelById(id: number): Observable<any> {
+    const query = `
+      query GetModelById($id: ID!) {
+        model(id: $id) {
+          id
+          name
+          description
+          imageUrl
+          releaseYear
+          modelNumber
+          isActive
+          brand {
+            id
+            name
+            category
+          }
+        }
+      }
+    `;
+    return this.query(query, { id: id.toString() }).pipe(
+      map((response: any) => response.model)
+    );
+  }
+
+  /**
+   * Get components by model
+   */
+  getComponentsByModel(modelId: number): Observable<any> {
+    const query = `
+      query GetComponentsByModel($modelId: ID!) {
+        componentsByModel(modelId: $modelId) {
+          id
+          name
+          description
+          price
+          quantityAvailable
+          imageUrl
+          componentType
+          manufacturer
+          warrantyMonths
+          condition
+          isActive
+          approvalStatus
+          model {
+            id
+            name
+            brand {
+              id
+              name
+            }
+          }
+          vendor {
+            id
+            firstName
+            lastName
+            email
+          }
+        }
+      }
+    `;
+    return this.query(query, { modelId: modelId.toString() }).pipe(
+      map((response: any) => response.componentsByModel || [])
+    );
+  }
+
+  /**
+   * Search models
+   */
+  searchModels(searchTerm: string): Observable<any> {
+    const query = `
+      query SearchModels($searchTerm: String!) {
+        searchModels(searchTerm: $searchTerm) {
+          id
+          name
+          description
+          imageUrl
+          releaseYear
+          modelNumber
+          brand {
+            id
+            name
+            category
+          }
+        }
+      }
+    `;
+    return this.query(query, { searchTerm }).pipe(
+      map((response: any) => response.searchModels || [])
+    );
   }
 
   /**

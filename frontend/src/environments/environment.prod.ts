@@ -1,10 +1,16 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://mobileparts-api.azurewebsites.net', // Your Azure App Service URL
-  graphqlUrl: 'https://mobileparts-api.azurewebsites.net/graphql',
+  apiUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/rest/v1',
+  graphqlUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/graphql/v1',
   graphqlEndpoint: '/graphql',
-  graphiqlUrl: 'https://mobileparts-api.azurewebsites.net/graphiql',
-  
+  graphiqlUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/graphiql',
+
+  // Supabase configuration
+  supabase: {
+    url: 'https://uqiawhrnbjtikdxclukn.supabase.co',
+    anonKey: 'YOUR_SUPABASE_ANON_KEY'
+  },
+
   // Firebase Authentication (same config as development)
   firebase: {
     apiKey: "YOUR_API_KEY_HERE",
@@ -14,7 +20,7 @@ export const environment = {
     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
     appId: "YOUR_APP_ID"
   },
-  
+
   // Deprecated: Azure AD B2C (replaced by Firebase)
   azureAdB2C: {
     clientId: '',

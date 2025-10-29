@@ -1,10 +1,17 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080',
-  graphqlUrl: 'http://localhost:8080/graphql',
+  // Supabase REST endpoint (PostgREST) and GraphQL endpoint
+  apiUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/rest/v1',
+  graphqlUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/graphql/v1',
   graphqlEndpoint: '/graphql',
-  graphiqlUrl: 'http://localhost:8080/graphiql',
-  
+  graphiqlUrl: 'https://uqiawhrnbjtikdxclukn.supabase.co/graphiql',
+
+  // Supabase configuration - set your anon key here (or export in environment)
+  supabase: {
+    url: 'https://uqiawhrnbjtikdxclukn.supabase.co',
+    anonKey: 'YOUR_SUPABASE_ANON_KEY'
+  },
+
   // Firebase Authentication (Replaces Azure AD B2C)
   // TODO: Replace with your Firebase project credentials from Firebase Console
   // Get these from: Firebase Console → Project Settings → Your apps → Web app
@@ -16,7 +23,7 @@ export const environment = {
     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
     appId: "YOUR_APP_ID"
   },
-  
+
   // Deprecated: Azure AD B2C (replaced by Firebase)
   azureAdB2C: {
     clientId: 'your-client-id-here',

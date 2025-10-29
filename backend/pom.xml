@@ -23,7 +23,6 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <azure.version>5.12.0</azure.version>
     <graphql.version>1.2.5</graphql.version>
     <!-- Pin commonly used dependency versions -->
     <lombok.version>edge-SNAPSHOT</lombok.version>
@@ -120,47 +119,6 @@
             <artifactId>flyway-sqlserver</artifactId>
         </dependency>
         
-        <!-- Azure SDK -->
-        <dependency>
-            <groupId>com.azure.spring</groupId>
-            <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-storage-blob</artifactId>
-            <version>12.26.1</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-security-keyvault-secrets</artifactId>
-            <version>4.8.6</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-ai-openai</artifactId>
-            <version>1.0.0-beta.12</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-search-documents</artifactId>
-            <version>11.7.2</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-communication-email</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.azure.spring</groupId>
-            <artifactId>spring-cloud-azure-starter-storage-blob</artifactId>
-        </dependency>
-        
         <!-- Firebase Admin SDK for token verification -->
         <dependency>
             <groupId>com.google.firebase</groupId>
@@ -249,18 +207,6 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-    
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.azure.spring</groupId>
-                <artifactId>spring-cloud-azure-dependencies</artifactId>
-                <version>${azure.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     
     <repositories>
         <repository>

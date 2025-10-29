@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { GraphqlService } from './graphql.service';
 
 export interface Model {
   id: number;
   name: string;
-  modelNumber: string;
+  modelNumber?: string;
   description?: string;
-  releaseYear: number;
+  releaseYear?: number;
   imageUrl?: string;
+  isActive?: boolean;
   brand: {
     id: number;
     name: string;
@@ -21,58 +21,113 @@ export interface Model {
   providedIn: 'root'
 })
 export class ModelService {
-  private apiUrl = `${environment.apiUrl}/api/models`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private graphqlService: GraphqlService) { }
 
   /**
    * Get all models
    */
   getAllModels(): Observable<Model[]> {
-    return this.http.get<Model[]>(this.apiUrl);
+    return this.graphqlService.getAllModels();
   }
 
   /**
    * Get model by ID
    */
   getModelById(id: number): Observable<Model> {
-    return this.http.get<Model>(`${this.apiUrl}/${id}`);
+    return this.graphqlService.getModelById(id);
   }
 
   /**
    * Get models by brand
    */
   getModelsByBrand(brandId: number): Observable<Model[]> {
-    return this.http.get<Model[]>(`${this.apiUrl}/brand/${brandId}`);
+    return this.graphqlService.getModelsByBrand(brandId);
   }
 
   /**
    * Search models by name
    */
   searchModels(searchTerm: string): Observable<Model[]> {
-    return this.http.get<Model[]>(`${this.apiUrl}/search`, {
-      params: { q: searchTerm }
-    });
+    return this.graphqlService.searchModels(searchTerm);
   }
 
   /**
    * Create new model (admin only)
    */
   createModel(model: Partial<Model>): Observable<Model> {
-    return this.http.post<Model>(this.apiUrl, model);
+    const mutation = `
+      mutation CreateModel($input: CreateModelInput!) {
+        createModel(input: $input) {
+          id
+          name
+          description
+          imageUrl
+          releaseYear
+          modelNumber
+          brand {
+            id
+            name
+            category
+          }
+        }
+      }
+    `;
+    return this.graphqlService.mutate(mutation, {
+      input: {
+        name: model.name,
+        brandId: model.brand?.id?.toString(),
+        description: model.description,
+        imageUrl: model.imageUrl,
+        releaseYear: model.releaseYear,
+        modelNumber: model.modelNumber
+      }
+    });
   }
 
   /**
    * Update model (admin only)
    */
   updateModel(id: number, model: Partial<Model>): Observable<Model> {
-    return this.http.put<Model>(`${this.apiUrl}/${id}`, model);
+    const mutation = `
+      mutation UpdateModel($id: ID!, $input: CreateModelInput!) {
+        updateModel(id: $id, input: $input) {
+          id
+          name
+          description
+          imageUrl
+          releaseYear
+          modelNumber
+          brand {
+            id
+            name
+            category
+          }
+        }
+      }
+    `;
+    return this.graphqlService.mutate(mutation, {
+      id: id.toString(),
+      input: {
+        name: model.name,
+        brandId: model.brand?.id?.toString(),
+        description: model.description,
+        imageUrl: model.imageUrl,
+        releaseYear: model.releaseYear,
+        modelNumber: model.modelNumber
+      }
+    });
   }
 
   /**
    * Delete model (admin only)
    */
   deleteModel(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    const mutation = `
+      mutation DeleteModel($id: ID!) {
+        deleteModel(id: $id)
+      }
+    `;
+    return this.graphqlService.mutate(mutation, { id: id.toString() });
   }
 }

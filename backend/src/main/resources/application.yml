@@ -6,9 +6,9 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:supabase}  # Default to supabase profile
   
   datasource:
-    url: ${AZURE_POSTGRESQL_URL:jdbc:postgresql://localhost:5432/mobileparts}
-    username: ${AZURE_POSTGRESQL_USERNAME:postgres}
-    password: ${AZURE_POSTGRESQL_PASSWORD:postgres}
+    url: jdbc:postgresql://localhost:5432/mobileparts
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -68,51 +68,6 @@ spring:
       allowed-methods: GET,POST
       allowed-headers: "*"
       allow-credentials: true
-  
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${AZURE_AD_B2C_ISSUER_URI:https://login.microsoftonline.com/your-tenant-id/v2.0}
-          jwk-set-uri: ${AZURE_AD_B2C_JWK_SET_URI:https://login.microsoftonline.com/your-tenant-id/discovery/v2.0/keys}
-
-# Azure Configuration
-azure:
-  activedirectory:
-    enabled: true
-    tenant-id: ${AZURE_AD_TENANT_ID:your-tenant-id}
-    client-id: ${AZURE_AD_CLIENT_ID:your-client-id}
-    client-secret: ${AZURE_AD_CLIENT_SECRET:your-client-secret}
-    app-id-uri: ${AZURE_AD_APP_ID_URI:api://your-app-id}
-    
-  storage:
-    blob:
-      enabled: true
-      account-name: ${AZURE_STORAGE_ACCOUNT_NAME:mobilepartstorage}
-      account-key: ${AZURE_STORAGE_ACCOUNT_KEY:your-storage-key}
-      endpoint: ${AZURE_STORAGE_ENDPOINT:https://mobilepartstorage.blob.core.windows.net}
-      container-name: ${AZURE_STORAGE_CONTAINER:product-images}
-  
-  keyvault:
-    enabled: true
-    uri: ${AZURE_KEYVAULT_URI:https://mobileparts-kv.vault.azure.net/}
-  
-  openai:
-    enabled: true
-    endpoint: ${AZURE_OPENAI_ENDPOINT:https://mobileparts-openai.openai.azure.com/}
-    api-key: ${AZURE_OPENAI_API_KEY:your-openai-key}
-    deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4}
-    embedding-deployment: ${AZURE_OPENAI_EMBEDDING_DEPLOYMENT:text-embedding-ada-002}
-  
-  search:
-    enabled: true
-    endpoint: ${AZURE_SEARCH_ENDPOINT:https://mobileparts-search.search.windows.net}
-    api-key: ${AZURE_SEARCH_API_KEY:your-search-key}
-    index-name: ${AZURE_SEARCH_INDEX:product-knowledge}
-  
-  communication:
-    connection-string: ${AZURE_COMMUNICATION_CONNECTION_STRING:endpoint=https://mobileparts-comm.communication.azure.com/;accesskey=your-key}
-    sender-address: ${AZURE_COMMUNICATION_SENDER:noreply@mobileparts.com}
 
 # Application Configuration
 app:

@@ -20,7 +20,7 @@ import java.io.InputStream;
  */
 @Configuration
 @ConditionalOnProperty(name = "firebase.enabled", havingValue = "true", matchIfMissing = false)
-public class FirebaseConfig {
+public class eFirebaseConfig {
 
     @Bean
     public FirebaseApp initializeFirebase() throws IOException {
